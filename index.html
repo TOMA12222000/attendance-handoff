@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><title>勤怠打刻自動化｜再構築の依頼文</title><style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#172331;background:#f4f7f7;line-height:1.8}*{box-sizing:border-box}body{margin:0}main{max-width:850px;margin:auto;padding:clamp(24px,6vw,64px) 20px 72px}.eyebrow{color:#08746d;font-weight:700;letter-spacing:.12em;font-size:.8rem}h1{font-size:clamp(1.8rem,5vw,2.8rem);line-height:1.3;margin:.5rem 0 1rem}header p{color:#50606a}section{background:white;border:1px solid #dce7e5;border-radius:16px;padding:clamp(20px,4vw,36px);margin-top:28px;box-shadow:0 8px 30px #163f3910}.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.bar h2{margin:0;font-size:1.15rem}button{background:#086e66;border:0;border-radius:8px;color:white;font:inherit;font-weight:700;padding:10px 18px;cursor:pointer}button:hover{background:#07564f}button:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}#status{font-size:.9rem;color:#086e66;min-height:1.8em}#prompt{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;margin:0;border-top:1px solid #e4eceb;padding-top:22px}footer{color:#60716f;font-size:.85rem;margin-top:24px}
+</style></head><body><main><header><div class="eyebrow">HANDOFF NOTE</div><h1>勤怠打刻自動化<br>再構築の依頼文</h1><p>以下の文章をコピーし、利用先のCopilotに貼り付けてください。</p></header><section><div class="bar"><h2>コピーする依頼文</h2><button id="copy" type="button">全文をコピー</button></div><div id="status" role="status" aria-live="polite"></div><div id="prompt">別のWindows PC・勤怠Webシステムで、勤怠打刻の自動化を新しく構築したいです。旧実装をそのまま移植する必要はありません。環境やシステムの仕様を確認しながら、安全に実現する方法を提案してください。
+
+【以前の仕組み】
+・出勤：Windowsログオン後、勤怠Webシステムで自動打刻。
+・退勤：Ctrl + Alt + Tで退勤打刻し、成功を確認してからPCをシャットダウン。
+・共通：重複打刻防止、エラー処理、ログ保存、不要な画面の非表示。
+・使用技術：Python、Selenium、PowerShell、Windowsタスクスケジューラ。
+
+【今回の要件】
+・新しいPCと勤怠システムに合わせて、上記と同等の機能を再構築する。
+・打刻済みか確認し、重複打刻を防ぐ。確認できない場合は打刻を繰り返さず、状況を知らせる。
+・退勤打刻の成功を確認できない場合はシャットダウンしない。
+・失敗時に原因を調べられるログを残す。ただし、パスワード、認証情報、個人情報などはログに記録しない。
+・不要な画面をできるだけ表示しない。ただし、操作や認証に必要な画面は利用できるようにする。
+・勤務先の規程やシステムの利用条件に従い、認証やセキュリティ対策を回避しない。
+・実装前に、必要な環境、権限、勤怠システムの仕様や確認事項を整理する。不明な情報は推測せず質問する。
+・実装方法、設定手順、動作確認、エラー時の対処、保守方法を分かりやすく示す。使用技術は環境に合うものを選び、上記の技術に限定しない。
+
+まず、実現方法の選択肢と確認すべき事項を提示してください。</div></section><footer>公開用の一般的な要件のみを掲載しています。</footer></main><script>
+const button=document.getElementById('copy'), status=document.getElementById('status');button.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(document.getElementById('prompt').innerText);status.textContent='コピーしました。Copilotに貼り付けてください。'}catch(e){status.textContent='コピーできませんでした。下の文章を選択してコピーしてください。'}});
+</script></body></html>
