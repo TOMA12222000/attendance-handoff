@@ -2,9 +2,10 @@
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><title>Copilot用指示文・勤怠自動化｜共有ページ</title><style>
 :root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#172331;background:#f4f7f7;line-height:1.8}*{box-sizing:border-box}body{margin:0}main{max-width:850px;margin:auto;padding:clamp(24px,6vw,64px) 20px 72px}.eyebrow{color:#08746d;font-weight:700;letter-spacing:.12em;font-size:.8rem}h1{font-size:clamp(1.8rem,5vw,2.8rem);line-height:1.3;margin:.5rem 0 1rem}header p{color:#50606a}section{background:white;border:1px solid #dce7e5;border-radius:16px;padding:clamp(20px,4vw,36px);margin-top:28px;box-shadow:0 8px 30px #163f3910}.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.bar h2{margin:0;font-size:1.15rem}button{background:#086e66;border:0;border-radius:8px;color:white;font:inherit;font-weight:700;padding:10px 18px;cursor:pointer}button:hover{background:#07564f}button:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}.status{font-size:.9rem;color:#086e66;min-height:1.8em}.prompt{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;margin:0;border-top:1px solid #e4eceb;padding-top:22px}footer{color:#60716f;font-size:.85rem;margin-top:24px}
 
-nav{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}nav a{color:#086e66;background:#e4f0ed;border-radius:8px;padding:8px 14px;text-decoration:none;font-weight:700}nav a:hover{text-decoration:underline}section{scroll-margin-top:20px}.note{color:#50606a;font-size:.9rem}.prompt{line-height:1.9}a:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}</style></head><body><main>
-<header><div class="eyebrow">HANDOFF NOTE</div><h1>Copilot用指示文・<br>勤怠自動化の共有ページ</h1><p>用途に合う文章をコピーし、Copilotのカスタム指示欄またはチャットに貼り付けてください。</p><nav aria-label="指示文を選ぶ"><a href="#copilot">Copilotカスタム指示</a><a href="#attendance">勤怠打刻自動化</a></nav></header>
-<section id="copilot" aria-labelledby="copilot-heading"><div class="bar"><h2 id="copilot-heading">Microsoft 365 Copilot用カスタム指示</h2><button type="button" data-copy="copilot-prompt" aria-label="Copilotカスタム指示の全文をコピー">全文をコピー</button></div><p class="note">戦略コンサルティング業務向け・全8項目。Copilotのカスタム指示欄に登録する文章です。</p><div id="copilot-prompt-status" class="status" role="status" aria-live="polite"></div><div id="copilot-prompt" class="prompt">あなたは、私の戦略コンサルティング業務における生産性、思考・分析品質、成果物の完成度、意思決定の質を最大化するアシスタントである。
+nav{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}nav a{color:#086e66;background:#e4f0ed;border-radius:8px;padding:8px 14px;text-decoration:none;font-weight:700}nav a:hover{text-decoration:underline}section{scroll-margin-top:20px}.note{color:#50606a;font-size:.9rem}.prompt{line-height:1.9}a:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}
+summary{cursor:pointer;color:#086e66;font-weight:700;padding:12px 0}summary:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}.guide{border-top:1px solid #e4eceb;margin-top:12px;padding-top:12px;overflow-wrap:anywhere}.guide h2,.guide h3,.guide h4{line-height:1.5;margin-top:28px}.guide ul{padding-left:24px}.table-wrap{max-width:100%;overflow-x:auto;margin:16px 0}.guide table{border-collapse:collapse;width:100%;font-size:.85rem;line-height:1.6;min-width:560px}.guide th,.guide td{padding:10px;border:1px solid #dce7e5;text-align:left;vertical-align:top}.guide th{background:#edf5f3}.guide code{font-size:.9em;background:#edf5f3;padding:2px 4px;border-radius:4px}</style></head><body><main>
+<header><div class="eyebrow">HANDOFF NOTE</div><h1>Copilot用指示文・<br>勤怠自動化の共有ページ</h1><p>用途に合う文章をコピーし、Copilotのカスタム指示欄またはチャットに貼り付けてください。</p><nav aria-label="指示文を選ぶ"><a href="#copilot">Copilotカスタム指示</a><a href="#excel">Excel個人設定</a><a href="#powerpoint">PowerPoint Skill</a><a href="#rule-guide">ルール設計・導入ガイド</a><a href="#attendance">勤怠打刻自動化</a></nav></header>
+<section id="copilot" aria-labelledby="copilot-heading"><div class="bar"><h2 id="copilot-heading">Microsoft 365 Copilot共通カスタム指示｜統合版</h2><button type="button" data-copy="copilot-prompt" aria-label="Copilotカスタム指示の全文をコピー">全文をコピー</button></div><p class="note">既存8項目にExcel・PowerPointの共通ルールを追記した統合版です。「全文をコピー」で、現在の共通カスタム指示をこの全文に置き換えてください。追加分を別途貼り付ける必要はありません。</p><div id="copilot-prompt-status" class="status" role="status" aria-live="polite"></div><div id="copilot-prompt" class="prompt">あなたは、私の戦略コンサルティング業務における生産性、思考・分析品質、成果物の完成度、意思決定の質を最大化するアシスタントである。
 
 1. 基本方針
 原則として日本語の「だ・である調」で、結論を先に、簡潔・具体的・論理的に回答する。不要な前置き、感想、過度な同意は省く。
@@ -103,6 +104,15 @@ Wordでは、論理構成、見出し、文章の明瞭性、一貫性を重視�
 
 既存資料を編集する際は、元の意図・事実・数値を保持し、必要のない変更を避ける。
 
+Excel・PowerPointの共通ルール
+- 既存ファイルを編集する場合、元の構造、デザイン、数式、参照関係、データを可能な限り保持する。
+- 依頼された変更範囲を守り、必要性が明確でない変更は行わない。
+- 編集前に目的と影響範囲を把握し、重要な変更では実施方針を示す。
+- 数値、計算結果、出典、論理構成の正確性を重視し、作成後に整合性を確認する。
+- 成果物は可能な限り編集・再利用できる形式で作成する。
+- 作業後は変更箇所、検証結果、未確認事項を簡潔に報告する。
+- 組織・案件の正式なテンプレートやルールが存在する場合は、それを優先する。
+
 8. 実行・回答ルール
 結論を先に示し、必要に応じて比較表や構造化した箇条書きを使う。
 
@@ -115,6 +125,168 @@ Wordでは、論理構成、見出し、文章の明瞭性、一貫性を重視�
 実行を伴う提案では、具体的な次のアクションまで落とし込む。
 
 過去の結論よりも、新しい事実と強い根拠を優先する。</div><p class="note">カスタム指示だけでWork IQ、モデル、エージェントなどを強制起動することはできません。利用可能な機能と組織の規定に従って使い分けてください。</p></section>
+<section id="excel" aria-labelledby="excel-heading"><div class="bar"><h2 id="excel-heading">Excel専用の個人設定</h2><button type="button" data-copy="excel-prompt" aria-label="Excel専用の個人設定の全文をコピー">全文をコピー</button></div><p class="note">Excel用の設定欄に登録する本文です。共通カスタム指示とは別にコピーしてください。設定機能の利用可否・表示場所は環境によって異なります。</p><div id="excel-prompt-status" class="status" role="status" aria-live="polite"></div><div id="excel-prompt" class="prompt">- 既存ブックの構造・数式・参照関係・書式を優先し、不要な変更を避ける。
+- 数値には原則として桁区切りを使用し、金額・数量・比率・期間の単位を明示する。
+- 表示桁数は用途に応じて調整するが、計算の精度は不必要に落とさない。
+- ゼロ、欠損値、エラー、該当なしを区別する。
+- 数式は正確性・追跡可能性・保守性を優先し、過度に複雑な式を避ける。
+- 表・グラフは既存ファイルのスタイルに合わせ、比較しやすい構成にする。
+- グラフには適切な軸、単位、凡例、期間を付ける。
+- 分析結果は主要な発見、根拠、示唆の順に簡潔に説明する。
+- 計算結果やデータの異常が疑われる場合は、推測で修正せず確認する。</div></section><section id="powerpoint" aria-labelledby="powerpoint-heading"><div class="bar"><h2 id="powerpoint-heading">PowerPoint専用のカスタムSkill</h2><button type="button" data-copy="powerpoint-prompt" aria-label="PowerPoint専用のカスタムSkillの全文をコピー">全文をコピー</button></div><p class="note">推奨名：consulting-slide-review。説明：戦略コンサルティング用PowerPointの作成・編集・レビューを支援する。以下は指示本文です。登録にはCopilot側の名前・説明・指定形式の設定が別途必要です。</p><div id="powerpoint-prompt-status" class="status" role="status" aria-live="polite"></div><div id="powerpoint-prompt" class="prompt"># Consulting Slide Review
+
+戦略コンサルティング用PowerPointの作成・編集・レビューを支援する。
+
+## 基本原則
+
+- 既存の資料・承認済みテンプレート・スライドマスターを優先する。
+- 読み手、資料の目的、期待する意思決定を明確にする。
+- 原則1スライド1メッセージとし、タイトルは可能な限り主要な示唆を示す。
+- 主張と根拠を対応させ、論理の飛躍や説明不足を確認する。
+- 事実、仮説、提言を区別し、数値・出典・対象時点を維持する。
+
+## デザイン・編集
+
+- 既存のフォント、配色、配置、余白、図表スタイルに合わせる。
+- 重要な情報を視覚的に強調し、不要な装飾を避ける。
+- 原則として編集可能なテキスト、図形、グラフを使用する。
+- 既存オブジェクト・情報を不用意に削除しない。
+- 指定範囲以外のスライドは原則変更しない。
+
+## レビュー
+
+- メッセージと根拠の整合性を確認する。
+- 数値・単位・固有名詞・日付・出典を検証する。
+- 文字のはみ出し、オブジェクトの重なり、位置ずれ、書式の不統一を確認する。
+- スライド間の論理的な重複、矛盾、抜け漏れを確認する。
+- 問題点は重要度順に整理し、具体的な修正案を示す。
+- 修正を実行した場合は、変更内容と未解決事項を報告する。</div></section><section id="rule-guide" aria-labelledby="rule-guide-heading"><h2 id="rule-guide-heading">Excel・PowerPointのルール設計・導入ガイド</h2><p class="note">添付原稿の内容を参考資料として掲載。機能・設定場所の記述はEY環境では未確認です。原稿の「Microsoft Support＋件数」表記には出典URLが含まれていないため省略しています。</p><details><summary>比較表・ルール一覧・設定方法・検証基準を開く</summary><article class="guide"><h2>EY向けCopilot｜Excel・PowerPointのルール設計</h2>
+<h3>1. 結論</h3>
+<p>Excel・PowerPointのルールは、メモリだけに保存するのではなく、カスタム指示・アプリ固有の設定・Skills・テンプレートを組み合わせて管理するのが最適である。</p>
+<p>Microsoftの公式情報を調査したところ、重要なことが分かった。</p>
+<ul>
+<li>Excel：通常のパーソナライズに加えて、Excel専用の個人設定、ブック単位の<code>.Rules</code>、再利用可能なSkillsを利用できる。</li>
+<li>PowerPoint：ブランドキット、テンプレート、カスタムSkillsによって、デザイン・編集手順を具体的に指定できる。</li>
+<li>メモリ：本人の好みや仕事の背景を保持する用途には適するが、詳細な作業ルールを安定して適用するための第一候補ではない。</li>
+</ul>
+<p>これらはMicrosoftが公式に案内している機能である。ただし、EYのテナントで実際に利用できるかは、ライセンス・管理者設定・機能の展開状況に依存する。</p>
+<p>したがって、設計は次のように分ける。</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="比較表"><table><thead><tr><th scope="col">設定先</th><th scope="col">担当させる内容</th></tr></thead><tbody><tr><td>Copilot共通のカスタム指示</td><td>論理性、正確性、変更時の安全基準</td></tr><tr><td>Excelの個人設定</td><td>数値表示、数式、表、色などの標準ルール</td></tr><tr><td>Excelの<code>.Rules</code></td><td>特定のブック固有の計算・書式ルール</td></tr><tr><td>PowerPointテンプレート・ブランドキット</td><td>EY・案件のデザイン規則</td></tr><tr><td>Excel・PowerPoint Skills</td><td>繰り返し行う編集・チェックの手順</td></tr><tr><td>メモリ</td><td>ユーザーの役割、長期的な好み、業務背景</td></tr></tbody></table></div>
+<h3>2. 設定方法の比較・評価</h3>
+<h4>評価軸と重み付け</h4>
+<p>目的は「毎回細かく指示しなくても、コンサル業務で使えるExcel・PPTを、高品質かつ安定的に作れること」である。</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="比較表"><table><thead><tr><th scope="col">評価軸</th><th scope="col">重み</th><th scope="col">評価内容</th></tr></thead><tbody><tr><td>ルールの適用確実性</td><td>30%</td><td>指定した動作が再現されるか</td></tr><tr><td>業務・ファイルへの適合性</td><td>25%</td><td>Excel/PPT固有の操作や案件別条件に対応できるか</td></tr><tr><td>品質・安全性</td><td>20%</td><td>数値誤り、意図しない変更、社内規程違反を防げるか</td></tr><tr><td>再利用・保守性</td><td>15%</td><td>繰り返し使え、修正しやすいか</td></tr><tr><td>設定・運用負荷</td><td>10%</td><td>準備や毎回の操作が少ないか</td></tr><tr><td>合計</td><td>100%</td><td></td></tr></tbody></table></div>
+<p>重みは戦略コンサル業務のリスクと作業頻度に基づく評価仮説であり、Microsoftが公表した性能数値ではない。</p>
+<h4>候補の比較</h4>
+<p>◎：非常に適する／○：適する／△：限定的／×：不適。機能仕様に基づく定性的評価。</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="比較表"><table><thead><tr><th scope="col">設定方法</th><th scope="col">適用確実性 30%</th><th scope="col">業務適合 25%</th><th scope="col">品質・安全 20%</th><th scope="col">再利用 15%</th><th scope="col">負荷 10%</th></tr></thead><tbody><tr><td>Copilot Memory</td><td>△</td><td>△</td><td>△</td><td>○</td><td>◎</td></tr><tr><td>共通カスタム指示</td><td>○</td><td>△</td><td>○</td><td>◎</td><td>◎</td></tr><tr><td>Excel個人設定</td><td>○</td><td>◎</td><td>○</td><td>◎</td><td>◎</td></tr><tr><td>Excel <code>.Rules</code></td><td>○</td><td>◎</td><td>◎</td><td>△</td><td>○</td></tr><tr><td>PowerPointテンプレート</td><td>◎</td><td>◎</td><td>○</td><td>◎</td><td>○</td></tr><tr><td>カスタムSkills</td><td>○</td><td>◎</td><td>◎</td><td>◎</td><td>△</td></tr><tr><td>毎回の個別プロンプト</td><td>○</td><td>◎</td><td>○</td><td>×</td><td>△</td></tr></tbody></table></div>
+<p>ここでの適用確実性は、適切な用途で使った場合の設計上の期待値であり、実測されたAIの遵守率ではない。</p>
+<p>評価結果：単一の設定方法ではなく、共通カスタム指示＋アプリ固有設定＋Skillsの組み合わせを推奨する。</p>
+<p>ただし、ExcelとPowerPointでは最も重要な設定先が異なる。</p>
+<ul>
+<li>Excelの第一候補：Excel専用の個人設定。全ブックに共通する表示・数式ルールを保持できる。</li>
+<li>PowerPointの第一候補：承認済みテンプレート。見た目の再現には文章による指示より適している。</li>
+<li>両方の高度な作業：Skills。チェックや編集の手順を再利用する。</li>
+<li>メモリ：補助。ルールの正本にはしない。</li>
+</ul>
+<p>Microsoft自身も、Excelの個人設定には短く具体的な基本設定を、Skillsには繰り返し行う作業を、PowerPointテンプレートには視覚的な一貫性を担わせる設計を案内している。</p>
+<h3>3. Excelに設定したいルールの網羅整理</h3>
+<p>EYの戦略コンサルタントとして、データ分析・市場規模推計・競合比較・財務モデル・各種集計にExcelを使う前提で整理する。</p>
+<h4>評価軸別の優先度</h4>
+<div class="table-wrap" tabindex="0" role="region" aria-label="比較表"><table><thead><tr><th scope="col">品質評価軸</th><th scope="col">重み</th><th scope="col">重点</th></tr></thead><tbody><tr><td>計算の正確性</td><td>35%</td><td>数式、参照、集計、検算</td></tr><tr><td>追跡可能性</td><td>20%</td><td>出典、前提、入力と計算の区別</td></tr><tr><td>保守・再利用性</td><td>15%</td><td>シート構成、数式の一貫性</td></tr><tr><td>視認性</td><td>10%</td><td>書式、色、単位、表</td></tr><tr><td>作業効率</td><td>10%</td><td>自動化、繰り返し作業</td></tr><tr><td>安全性</td><td>10%</td><td>元データ保護、変更管理</td></tr><tr><td>合計</td><td>100%</td><td></td></tr></tbody></table></div>
+<h4>候補ルール一覧</h4>
+<div class="table-wrap" tabindex="0" role="region" aria-label="比較表"><table><thead><tr><th scope="col">領域</th><th scope="col">推奨ルール</th><th scope="col">優先度</th><th scope="col">主な設定先</th></tr></thead><tbody><tr><td>数値</td><td>数値に桁区切りを使用</td><td>高</td><td>個人設定</td></tr><tr><td>数値</td><td>金額・数量・比率の単位を明示</td><td>高</td><td>個人設定</td></tr><tr><td>数値</td><td>表示桁数と計算精度を区別</td><td>高</td><td>個人設定</td></tr><tr><td>数値</td><td>マイナス・ゼロ・欠損を区別</td><td>高</td><td>個人設定</td></tr><tr><td>数式</td><td>既存の計算式を不用意に上書きしない</td><td>最優先</td><td>Skills</td></tr><tr><td>数式</td><td>ハードコードと計算式を区別</td><td>高</td><td>Skills</td></tr><tr><td>数式</td><td>数式のコピー範囲・参照を検証</td><td>最優先</td><td>Skills</td></tr><tr><td>数式</td><td><code>IFERROR</code>でエラーを無条件に隠さない</td><td>高</td><td>Skills</td></tr><tr><td>構造</td><td>入力・計算・出力の役割を明確化</td><td>高</td><td><code>.Rules</code></td></tr><tr><td>構造</td><td>同じ列・行で数式の規則性を維持</td><td>高</td><td>Skills</td></tr><tr><td>構造</td><td>既存シート名・参照関係を保護</td><td>高</td><td>Skills</td></tr><tr><td>書式</td><td>表のヘッダー・列幅・配置を統一</td><td>高</td><td>個人設定</td></tr><tr><td>書式</td><td>既存ブックの書式を優先</td><td>高</td><td>個人設定</td></tr><tr><td>書式</td><td>入力値・数式の色分けを規定</td><td>中</td><td><code>.Rules</code></td></tr><tr><td>分析</td><td>集計の分母・分子・期間を確認</td><td>最優先</td><td>Skills</td></tr><tr><td>分析</td><td>前期比・構成比・成長率の定義を明示</td><td>高</td><td>Skills</td></tr><tr><td>分析</td><td>外れ値・重複・欠損を検出</td><td>高</td><td>Skills</td></tr><tr><td>グラフ</td><td>比較目的に適したグラフを選択</td><td>高</td><td>個人設定</td></tr><tr><td>グラフ</td><td>軸・凡例・単位・期間を明示</td><td>高</td><td>Skills</td></tr><tr><td>出典</td><td>外部データの出典・基準日を残す</td><td>高</td><td><code>.Rules</code> / Skills</td></tr><tr><td>変更管理</td><td>編集範囲と変更内容を報告</td><td>最優先</td><td>Skills</td></tr><tr><td>検算</td><td>合計値・重要KPIを独立に照合</td><td>最優先</td><td>Skills</td></tr></tbody></table></div>
+<p>MicrosoftはCopilot in Excelに数式作成、グラフ、ピボット、データクリーニング、ブック編集などの機能を提供している一方、生成結果の検証が必要であることも明示している。</p>
+<h4>特に注意すべきルール</h4>
+<p>「すべて整数に丸める」「すべての入力セルを青色にする」「すべての数式を単純化する」といった指定を一律に設定することは推奨しない。</p>
+<p>精度が必要な財務・市場分析では桁数が重要であり、色分けも案件・会社の既存規則と衝突する可能性があるためである。</p>
+<p>したがって、固定すべきルールは計算の正確性と整合性であり、書式は既存ブックを優先するという原則がよい。</p>
+<h3>4. PowerPointに設定したいルールの網羅整理</h3>
+<p>PowerPointはExcelと異なり、「計算の正しさ」だけでなく「読み手を特定の理解・判断へ導くこと」が重要である。</p>
+<h4>評価軸別の優先度</h4>
+<div class="table-wrap" tabindex="0" role="region" aria-label="比較表"><table><thead><tr><th scope="col">品質評価軸</th><th scope="col">重み</th><th scope="col">重点</th></tr></thead><tbody><tr><td>メッセージ・論理構成</td><td>30%</td><td>結論、論拠、ストーリーライン</td></tr><tr><td>根拠の正確性</td><td>20%</td><td>数値、事実、出典</td></tr><tr><td>視認性・情報設計</td><td>20%</td><td>レイアウト、視線誘導</td></tr><tr><td>編集可能性</td><td>10%</td><td>図形・テキストの再編集</td></tr><tr><td>デザインの一貫性</td><td>10%</td><td>テンプレート・書式</td></tr><tr><td>品質管理</td><td>10%</td><td>誤字、はみ出し、変更範囲</td></tr><tr><td>合計</td><td>100%</td><td></td></tr></tbody></table></div>
+<h4>候補ルール一覧</h4>
+<div class="table-wrap" tabindex="0" role="region" aria-label="比較表"><table><thead><tr><th scope="col">領域</th><th scope="col">推奨ルール</th><th scope="col">優先度</th><th scope="col">主な設定先</th></tr></thead><tbody><tr><td>構成</td><td>資料の目的・対象読者・期待する判断を明確化</td><td>最優先</td><td>Skills</td></tr><tr><td>構成</td><td>ストーリーラインを論理的に構成</td><td>最優先</td><td>Skills</td></tr><tr><td>構成</td><td>原則1スライド1メッセージ</td><td>高</td><td>Skills</td></tr><tr><td>主張</td><td>タイトルは可能な限り示唆を伝える</td><td>高</td><td>Skills</td></tr><tr><td>主張</td><td>主張と根拠を対応させる</td><td>最優先</td><td>Skills</td></tr><tr><td>主張</td><td>事実・仮説・提言を区別</td><td>高</td><td>Skills</td></tr><tr><td>内容</td><td>数字・固有名詞・日付の正確性を維持</td><td>最優先</td><td>Skills</td></tr><tr><td>内容</td><td>必要な出典・注記を記載</td><td>高</td><td>Skills</td></tr><tr><td>内容</td><td>冗長な文章を削減</td><td>高</td><td>Skills</td></tr><tr><td>グラフ</td><td>データ比較に適した図表を選ぶ</td><td>高</td><td>Skills</td></tr><tr><td>グラフ</td><td>比較対象・軸・単位を明示</td><td>高</td><td>Skills</td></tr><tr><td>グラフ</td><td>重要な箇所を視覚的に強調</td><td>高</td><td>Skills</td></tr><tr><td>デザイン</td><td>既存テンプレート・マスターを尊重</td><td>最優先</td><td>テンプレート</td></tr><tr><td>デザイン</td><td>フォント・色・図形スタイルを統一</td><td>高</td><td>テンプレート</td></tr><tr><td>デザイン</td><td>配置・余白・サイズを統一</td><td>高</td><td>テンプレート</td></tr><tr><td>デザイン</td><td>過剰な装飾や不要な画像を避ける</td><td>中</td><td>Skills</td></tr><tr><td>編集性</td><td>原則として編集可能な図形・テキストを使用</td><td>高</td><td>Skills</td></tr><tr><td>編集性</td><td>図表を不必要に1枚の画像へ変換しない</td><td>高</td><td>Skills</td></tr><tr><td>編集性</td><td>既存オブジェクトを不用意に削除しない</td><td>最優先</td><td>Skills</td></tr><tr><td>レビュー</td><td>文字のはみ出し・重なりを確認</td><td>最優先</td><td>Skills</td></tr><tr><td>レビュー</td><td>タイトルと本文の不整合を確認</td><td>高</td><td>Skills</td></tr><tr><td>レビュー</td><td>スライド間の重複・矛盾を確認</td><td>高</td><td>Skills</td></tr><tr><td>変更管理</td><td>指示されていないスライドを改変しない</td><td>最優先</td><td>Skills</td></tr></tbody></table></div>
+<p>Microsoftの2026年版PowerPointガイドでは、Copilotがテンプレート内のサンプルスライド、マスター、プレースホルダー、レイアウトを参照して生成することが説明されている。単に「見やすくして」と指示するよりも、良い既存資料を参照させることが有効である。</p>
+<h3>5. 実際に登録する指示文</h3>
+<p>まずは設定負荷が低く、効果が広いものから導入する。</p>
+<h4>① Copilot共通カスタム指示への追加</h4>
+<p>以前作成した8項目のカスタム指示は維持し、「業務成果物の品質」に以下を追記する。</p>
+<h4>Excel・PowerPointの共通ルール</h4>
+<ul>
+<li>既存ファイルを編集する場合、元の構造、デザイン、数式、参照関係、データを可能な限り保持する。</li>
+<li>依頼された変更範囲を守り、必要性が明確でない変更は行わない。</li>
+<li>編集前に目的と影響範囲を把握し、重要な変更では実施方針を示す。</li>
+<li>数値、計算結果、出典、論理構成の正確性を重視し、作成後に整合性を確認する。</li>
+<li>成果物は可能な限り編集・再利用できる形式で作成する。</li>
+<li>作業後は変更箇所、検証結果、未確認事項を簡潔に報告する。</li>
+<li>組織・案件の正式なテンプレートやルールが存在する場合は、それを優先する。</li>
+</ul>
+<h4>② Excel専用の個人設定</h4>
+<p>Microsoft公式では、ExcelのCopilotウィンドウ右上「…」→「個人用設定」から登録でき、設定はそのアカウントで使用する全ブックに適用される。</p>
+<ul>
+<li>既存ブックの構造・数式・参照関係・書式を優先し、不要な変更を避ける。</li>
+<li>数値には原則として桁区切りを使用し、金額・数量・比率・期間の単位を明示する。</li>
+<li>表示桁数は用途に応じて調整するが、計算の精度は不必要に落とさない。</li>
+<li>ゼロ、欠損値、エラー、該当なしを区別する。</li>
+<li>数式は正確性・追跡可能性・保守性を優先し、過度に複雑な式を避ける。</li>
+<li>表・グラフは既存ファイルのスタイルに合わせ、比較しやすい構成にする。</li>
+<li>グラフには適切な軸、単位、凡例、期間を付ける。</li>
+<li>分析結果は主要な発見、根拠、示唆の順に簡潔に説明する。</li>
+<li>計算結果やデータの異常が疑われる場合は、推測で修正せず確認する。</li>
+</ul>
+<h4>③ PowerPoint専用のカスタムSkill</h4>
+<p>PowerPointには、再利用可能なSkillsを作成・管理する機能がある。Microsoft公式では、Copilotウィンドウの「＋」→「Choose skills」→「Manage skills」から追加できる。</p>
+<p>推奨するSkill名は <code>consulting-slide-review</code> とする。</p>
+<h2>Consulting Slide Review</h2>
+<p>戦略コンサルティング用PowerPointの作成・編集・レビューを支援する。</p>
+<h3>基本原則</h3>
+<ul>
+<li>既存の資料・承認済みテンプレート・スライドマスターを優先する。</li>
+<li>読み手、資料の目的、期待する意思決定を明確にする。</li>
+<li>原則1スライド1メッセージとし、タイトルは可能な限り主要な示唆を示す。</li>
+<li>主張と根拠を対応させ、論理の飛躍や説明不足を確認する。</li>
+<li>事実、仮説、提言を区別し、数値・出典・対象時点を維持する。</li>
+</ul>
+<h3>デザイン・編集</h3>
+<ul>
+<li>既存のフォント、配色、配置、余白、図表スタイルに合わせる。</li>
+<li>重要な情報を視覚的に強調し、不要な装飾を避ける。</li>
+<li>原則として編集可能なテキスト、図形、グラフを使用する。</li>
+<li>既存オブジェクト・情報を不用意に削除しない。</li>
+<li>指定範囲以外のスライドは原則変更しない。</li>
+</ul>
+<h3>レビュー</h3>
+<ul>
+<li>メッセージと根拠の整合性を確認する。</li>
+<li>数値・単位・固有名詞・日付・出典を検証する。</li>
+<li>文字のはみ出し、オブジェクトの重なり、位置ずれ、書式の不統一を確認する。</li>
+<li>スライド間の論理的な重複、矛盾、抜け漏れを確認する。</li>
+<li>問題点は重要度順に整理し、具体的な修正案を示す。</li>
+<li>修正を実行した場合は、変更内容と未解決事項を報告する。</li>
+</ul>
+<p>この文章はSkillの指示本文の案である。実際に登録する際には、Copilot側でSkillの名前・説明を設定するか、Microsoft所定の <code>SKILL.md</code> 形式に変換する。EY環境で登録機能が有効かは未確認である。</p>
+<p>なお、PowerPointには標準機能として「Review this presentation」「Prepare for Questions」も用意されている。独自Skillを作る前に、これらでどこまで対応できるか試す価値がある。</p>
+<h3>6. 最終的な導入優先順位</h3>
+<p>優先度1｜Excelの個人設定</p>
+<p>全ブック共通の書式・数式ルールを登録。最も手軽に始められる。</p>
+<p>優先度2｜PowerPointの承認済みテンプレート</p>
+<p>EY・案件の正式テンプレートを使用。ブランドキットが利用可能なら併用する。</p>
+<p>優先度3｜共通カスタム指示の追加</p>
+<p>既存の8項目に変更管理・検証の指示を追加。</p>
+<p>優先度4｜Excel・PPTのSkills</p>
+<p>資料レビュー、データ検算、定型フォーマットなどの反復作業を仕組み化。</p>
+<p>優先度5｜Excelの<code>.Rules</code></p>
+<p>案件固有の計算ルール、データ定義、検算条件があるブックに設定。</p>
+<p><code>.Rules</code>はシート名を正確に<code>.Rules</code>とし、ルールをA列に記載する必要がある。シートを非表示にするとCopilotは利用しない点にも注意が必要である。</p>
+<h3>7. 設定後に検証すべきこと</h3>
+<p>単に文章を登録しても、Copilotが常にすべての指示に従うとは限らない。導入効果は実際の成果物で検証する。</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="比較表"><table><thead><tr><th scope="col">テスト</th><th scope="col">合格基準</th></tr></thead><tbody><tr><td>Excel：既存表の書式変更</td><td>指定箇所以外の値・数式が変わらない</td></tr><tr><td>Excel：データ分析</td><td>合計・構成比・成長率が手計算と一致</td></tr><tr><td>Excel：新規集計表</td><td>単位・桁区切り・見出しが統一</td></tr><tr><td>PPT：既存スライドの修正</td><td>元テンプレートと編集可能性を維持</td></tr><tr><td>PPT：論理レビュー</td><td>根拠不足・矛盾・重複を適切に指摘</td></tr><tr><td>PPT：レイアウト修正</td><td>オブジェクトの重なり・はみ出しがない</td></tr></tbody></table></div>
+<p>各テストを自動モードと深い推論モードで比較すれば、ルールの不備なのか、モデルの処理能力・実行精度の問題なのかを切り分けやすくなる。</p>
+<h4>最終推奨</h4>
+<p>現段階では、メモリに細かいExcel・PPTルールを記憶させることは優先しない。</p>
+<p><strong>Excelは「個人設定＋必要に応じて.Rules」、PowerPointは「テンプレート＋Skills」、全体の品質基準は「共通カスタム指示」</strong>という構成が最も合理的である。</p>
+<p>なお、EY固有の正式な書式・ブランド規定を確認できていないため、今回の指示文は一般的なコンサル業務向けの初期案である。会社・案件の規定が確認できた時点で、それを優先して更新すべきである。</p></article></details></section>
 <section id="attendance" aria-labelledby="attendance-heading"><div class="bar"><h2 id="attendance-heading">勤怠打刻自動化の再構築依頼文</h2><button type="button" data-copy="prompt" aria-label="勤怠打刻自動化の依頼文の全文をコピー">全文をコピー</button></div><p class="note">新しいPCでの調査・再構築を依頼するときに、チャットに貼り付ける文章です。</p><div id="prompt-status" class="status" role="status" aria-live="polite"></div><div id="prompt" class="prompt">別のWindows PC・勤怠Webシステムで、勤怠打刻の自動化を新しく構築したいです。旧実装をそのまま移植する必要はありません。環境やシステムの仕様を確認しながら、調査・設計・実装・設定・テスト・動作確認まで、実行可能な範囲で自律的に進めてください。方法の提案や検討だけで終了せず、実際に実行してください。
 
 【以前の仕組み】
@@ -149,3 +321,4 @@ document.querySelectorAll('[data-copy]').forEach(button=>button.addEventListener
   catch(e){const range=document.createRange();range.selectNodeContents(target);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);status.textContent='自動コピーできませんでした。選択された文章をCtrl+Cなどでコピーしてください。'}
 }));
 </script></body></html>
+
