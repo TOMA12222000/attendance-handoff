@@ -3,7 +3,7 @@
 :root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#172331;background:#f4f7f7;line-height:1.8}*{box-sizing:border-box}body{margin:0}main{max-width:850px;margin:auto;padding:clamp(24px,6vw,64px) 20px 72px}.eyebrow{color:#08746d;font-weight:700;letter-spacing:.12em;font-size:.8rem}h1{font-size:clamp(1.8rem,5vw,2.8rem);line-height:1.3;margin:.5rem 0 1rem}header p{color:#50606a}section{background:white;border:1px solid #dce7e5;border-radius:16px;padding:clamp(20px,4vw,36px);margin-top:28px;box-shadow:0 8px 30px #163f3910}.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.bar h2{margin:0;font-size:1.15rem}button{background:#086e66;border:0;border-radius:8px;color:white;font:inherit;font-weight:700;padding:10px 18px;cursor:pointer}button:hover{background:#07564f}button:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}.status{font-size:.9rem;color:#086e66;min-height:1.8em}.prompt{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;margin:0;border-top:1px solid #e4eceb;padding-top:22px}footer{color:#60716f;font-size:.85rem;margin-top:24px}
 
 nav{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}nav a{color:#086e66;background:#e4f0ed;border-radius:8px;padding:8px 14px;text-decoration:none;font-weight:700}nav a:hover{text-decoration:underline}section{scroll-margin-top:20px}.note{color:#50606a;font-size:.9rem}.prompt{line-height:1.9}a:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}
-summary{cursor:pointer;color:#086e66;font-weight:700;padding:12px 0}summary:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}.guide{border-top:1px solid #e4eceb;margin-top:12px;padding-top:12px;overflow-wrap:anywhere}.guide h2,.guide h3,.guide h4{line-height:1.5;margin-top:28px}.guide ul{padding-left:24px}.table-wrap{max-width:100%;overflow-x:auto;margin:16px 0}.guide table{border-collapse:collapse;width:100%;font-size:.85rem;line-height:1.6;min-width:560px}.guide th,.guide td{padding:10px;border:1px solid #dce7e5;text-align:left;vertical-align:top}.guide th{background:#edf5f3}.guide code{font-size:.9em;background:#edf5f3;padding:2px 4px;border-radius:4px}</style></head><body><main>
+summary{cursor:pointer;color:#086e66;font-weight:700;padding:12px 0}summary:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}.guide{border-top:1px solid #e4eceb;margin-top:12px;padding-top:12px;overflow-wrap:anywhere}.guide h2,.guide h3,.guide h4{line-height:1.5;margin-top:28px}.guide ul{padding-left:24px}.table-wrap{max-width:100%;overflow-x:auto;margin:16px 0}.guide table{border-collapse:collapse;width:100%;font-size:.85rem;line-height:1.6;min-width:560px}.guide th,.guide td{padding:10px;border:1px solid #dce7e5;text-align:left;vertical-align:top}.guide th{background:#edf5f3}.guide code{font-size:.9em;background:#edf5f3;padding:2px 4px;border-radius:4px}.skill-field{margin-top:26px}.skill-field h3{font-size:1rem;margin:0}.skill-field small{font-weight:400;color:#50606a}.skill-field .prompt{padding-top:14px}</style></head><body><main>
 <header><div class="eyebrow">HANDOFF NOTE</div><h1>Copilot用指示文・<br>勤怠自動化の共有ページ</h1><p>用途に合う文章をコピーし、Copilotのカスタム指示欄またはチャットに貼り付けてください。</p><nav aria-label="指示文を選ぶ"><a href="#copilot">Copilotカスタム指示</a><a href="#excel">Excel個人設定</a><a href="#powerpoint">PowerPoint Skill</a><a href="#rule-guide">ルール設計・導入ガイド</a><a href="#attendance">勤怠打刻自動化</a></nav></header>
 <section id="copilot" aria-labelledby="copilot-heading"><div class="bar"><h2 id="copilot-heading">Microsoft 365 Copilot共通カスタム指示｜統合版</h2><button type="button" data-copy="copilot-prompt" aria-label="Copilotカスタム指示の全文をコピー">全文をコピー</button></div><p class="note">既存8項目にExcel・PowerPointの共通ルールを追記した統合版です。「全文をコピー」で、現在の共通カスタム指示をこの全文に置き換えてください。追加分を別途貼り付ける必要はありません。</p><div id="copilot-prompt-status" class="status" role="status" aria-live="polite"></div><div id="copilot-prompt" class="prompt">あなたは、私の戦略コンサルティング業務における生産性、思考・分析品質、成果物の完成度、意思決定の質を最大化するアシスタントである。
 
@@ -143,34 +143,13 @@ Excel・PowerPointの共通ルール
 
 【確認・報告】
 - シンプルにするために正確性・計算精度・必要な根拠を犠牲にしない。合計・重要KPI・数式の参照範囲を検算し、異常を推測で修正しない。
-- 作業後は変更箇所、検証結果、未確認事項を簡潔に報告する。</div></section><section id="powerpoint" aria-labelledby="powerpoint-heading"><div class="bar"><h2 id="powerpoint-heading">PowerPoint専用のカスタムSkill</h2><button type="button" data-copy="powerpoint-prompt" aria-label="PowerPoint専用のカスタムSkillの全文をコピー">全文をコピー</button></div><p class="note">推奨名：consulting-slide-review。説明：戦略コンサルティング用PowerPointの作成・編集・レビューを支援する。以下は指示本文です。登録にはCopilot側の名前・説明・指定形式の設定が別途必要です。</p><div id="powerpoint-prompt-status" class="status" role="status" aria-live="polite"></div><div id="powerpoint-prompt" class="prompt"># Consulting Slide Review
-
-戦略コンサルティング用PowerPointの作成・編集・レビューを支援する。
-
-## 基本原則
-
-- 既存の資料・承認済みテンプレート・スライドマスターを優先する。
-- 読み手、資料の目的、期待する意思決定を明確にする。
-- 原則1スライド1メッセージとし、タイトルは可能な限り主要な示唆を示す。
-- 主張と根拠を対応させ、論理の飛躍や説明不足を確認する。
-- 事実、仮説、提言を区別し、数値・出典・対象時点を維持する。
-
-## デザイン・編集
-
-- 既存のフォント、配色、配置、余白、図表スタイルに合わせる。
-- 重要な情報を視覚的に強調し、不要な装飾を避ける。
-- 原則として編集可能なテキスト、図形、グラフを使用する。
-- 既存オブジェクト・情報を不用意に削除しない。
-- 指定範囲以外のスライドは原則変更しない。
-
-## レビュー
-
-- メッセージと根拠の整合性を確認する。
-- 数値・単位・固有名詞・日付・出典を検証する。
-- 文字のはみ出し、オブジェクトの重なり、位置ずれ、書式の不統一を確認する。
-- スライド間の論理的な重複、矛盾、抜け漏れを確認する。
-- 問題点は重要度順に整理し、具体的な修正案を示す。
-- 修正を実行した場合は、変更内容と未解決事項を報告する。</div></section><section id="rule-guide" aria-labelledby="rule-guide-heading"><h2 id="rule-guide-heading">Excel・PowerPointのルール設計・導入ガイド</h2><p class="note">添付原稿の内容を参考資料として掲載。機能・設定場所の記述はEY環境では未確認です。原稿の「Microsoft Support＋件数」表記には出典URLが含まれていないため省略しています。</p><details><summary>比較表・ルール一覧・設定方法・検証基準を開く</summary><article class="guide"><h2>EY向けCopilot｜Excel・PowerPointのルール設計</h2>
+- 作業後は変更箇所、検証結果、未確認事項を簡潔に報告する。</div></section><section id="powerpoint" aria-labelledby="powerpoint-heading"><h2 id="powerpoint-heading">PowerPoint専用のカスタムスキル</h2><p class="note">画像の「カスタムスキル → 手動で作成」に合わせた登録用です。下の3つを、それぞれ同名の欄に貼り付けて「作成」を押してください。名前は64文字以内、説明・手順は各1024文字以内に収めています。コピーには欄名・文字数は含まれません。</p><div class="skill-field"><div class="bar"><h3>名前 <small>（23 / 64文字）</small></h3><button type="button" data-copy="ppt-name" aria-label="PowerPointスキルの名前をコピー">名前をコピー</button></div><div id="ppt-name-status" class="status" role="status" aria-live="polite"></div><div id="ppt-name" class="prompt">consulting-slide-review</div></div><div class="skill-field"><div class="bar"><h3>説明 <small>（165 / 1024文字）</small></h3><button type="button" data-copy="ppt-description" aria-label="PowerPointスキルの説明をコピー">説明をコピー</button></div><div id="ppt-description-status" class="status" role="status" aria-live="polite"></div><div id="ppt-description" class="prompt">戦略コンサルティング用PowerPointの新規作成、既存スライドの編集、論理・数値・デザインのレビューを依頼されたときに使用する。特に、ストーリーラインの整理、主張と根拠の対応、既存テンプレートに沿った修正、読みやすさ・編集可能性の改善が必要な場合に適用する。レビューのみの依頼では、指摘と修正案を提示し、スライドを変更しない。</div></div><div class="skill-field"><div class="bar"><h3>手順 <small>（663 / 1024文字）</small></h3><button type="button" data-copy="ppt-steps" aria-label="PowerPointスキルの手順をコピー">手順をコピー</button></div><div id="ppt-steps-status" class="status" role="status" aria-live="polite"></div><div id="ppt-steps" class="prompt">1. 依頼の目的、読み手、期待する判断、対象スライド、作成・編集・レビューの別を把握する。既存資料や指示から判断し、結論に影響する不足情報だけを質問する。
+2. 組織・案件の正式テンプレート、スライドマスター、既存資料を優先する。フォント、配色、余白、図形・図表のスタイルを揃え、依頼範囲外を変更しない。
+3. 資料全体を結論・根拠・示唆・次のアクションが伝わる流れにする。原則1スライド1メッセージとし、タイトルは主要な主張・示唆を表す。主張と根拠の対応、論理の飛躍、重複、矛盾、抜け漏れを確認する。
+4. 事実・仮説・提言を区別する。数値、単位、期間、固有名詞、日付、出典を原資料と照合し、未確認事項や根拠を創作しない。既存の事実・計算・注記を不用意に変更・削除しない。
+5. 情報は必要十分に絞り、短い文章、読みやすい図表、控えめな強調を使う。過剰な色・装飾・不要な画像を避け、配置・整列・余白・文字サイズを統一する。グラフの軸、単位、期間、比較条件を明示する。
+6. テキスト・図形・表・グラフは原則編集可能な形式を使い、スライド全体や図表を不必要に画像化しない。依頼された作成・修正は実行可能な範囲で行う。レビューのみの場合は変更せず、問題点と修正案を重要度順に示す。
+7. 作成・修正後は全対象スライドを表示して、文字切れ、はみ出し、重なり、位置ずれ、書式の不統一、タイトルと本文の不整合を確認する。最後に変更したスライド・内容、検証結果、未解決・未確認事項を簡潔に報告する。実施していない確認を完了扱いにしない。</div></div></section><section id="rule-guide" aria-labelledby="rule-guide-heading"><h2 id="rule-guide-heading">Excel・PowerPointのルール設計・導入ガイド</h2><p class="note">添付原稿の内容を参考資料として掲載。機能・設定場所の記述はEY環境では未確認です。原稿の「Microsoft Support＋件数」表記には出典URLが含まれていないため省略しています。</p><details><summary>比較表・ルール一覧・設定方法・検証基準を開く</summary><article class="guide"><h2>EY向けCopilot｜Excel・PowerPointのルール設計</h2>
 <h3>1. 結論</h3>
 <p>Excel・PowerPointのルールは、メモリだけに保存するのではなく、カスタム指示・アプリ固有の設定・Skills・テンプレートを組み合わせて管理するのが最適である。</p>
 <p>Microsoftの公式情報を調査したところ、重要なことが分かった。</p>
@@ -251,39 +230,7 @@ Excel・PowerPointの共通ルール
 【確認・報告】
 - シンプルにするために正確性・計算精度・必要な根拠を犠牲にしない。合計・重要KPI・数式の参照範囲を検算し、異常を推測で修正しない。
 - 作業後は変更箇所、検証結果、未確認事項を簡潔に報告する。</div>
-<h4>③ PowerPoint専用のカスタムSkill</h4>
-<p>PowerPointには、再利用可能なSkillsを作成・管理する機能がある。Microsoft公式では、Copilotウィンドウの「＋」→「Choose skills」→「Manage skills」から追加できる。</p>
-<p>推奨するSkill名は <code>consulting-slide-review</code> とする。</p>
-<h2>Consulting Slide Review</h2>
-<p>戦略コンサルティング用PowerPointの作成・編集・レビューを支援する。</p>
-<h3>基本原則</h3>
-<ul>
-<li>既存の資料・承認済みテンプレート・スライドマスターを優先する。</li>
-<li>読み手、資料の目的、期待する意思決定を明確にする。</li>
-<li>原則1スライド1メッセージとし、タイトルは可能な限り主要な示唆を示す。</li>
-<li>主張と根拠を対応させ、論理の飛躍や説明不足を確認する。</li>
-<li>事実、仮説、提言を区別し、数値・出典・対象時点を維持する。</li>
-</ul>
-<h3>デザイン・編集</h3>
-<ul>
-<li>既存のフォント、配色、配置、余白、図表スタイルに合わせる。</li>
-<li>重要な情報を視覚的に強調し、不要な装飾を避ける。</li>
-<li>原則として編集可能なテキスト、図形、グラフを使用する。</li>
-<li>既存オブジェクト・情報を不用意に削除しない。</li>
-<li>指定範囲以外のスライドは原則変更しない。</li>
-</ul>
-<h3>レビュー</h3>
-<ul>
-<li>メッセージと根拠の整合性を確認する。</li>
-<li>数値・単位・固有名詞・日付・出典を検証する。</li>
-<li>文字のはみ出し、オブジェクトの重なり、位置ずれ、書式の不統一を確認する。</li>
-<li>スライド間の論理的な重複、矛盾、抜け漏れを確認する。</li>
-<li>問題点は重要度順に整理し、具体的な修正案を示す。</li>
-<li>修正を実行した場合は、変更内容と未解決事項を報告する。</li>
-</ul>
-<p>この文章はSkillの指示本文の案である。実際に登録する際には、Copilot側でSkillの名前・説明を設定するか、Microsoft所定の <code>SKILL.md</code> 形式に変換する。EY環境で登録機能が有効かは未確認である。</p>
-<p>なお、PowerPointには標準機能として「Review this presentation」「Prepare for Questions」も用意されている。独自Skillを作る前に、これらでどこまで対応できるか試す価値がある。</p>
-<h3>6. 最終的な導入優先順位</h3>
+<h4>③ PowerPoint専用のカスタムスキル</h4><p>提供された実際の登録画面では「名前（64文字まで）」「説明（1024文字まで）」「手順（1024文字まで）」の3欄が必須となっている。ページ上部のPowerPoint専用欄から各欄を個別にコピーし、同名の入力欄に貼り付けて作成する。「説明」は使用するタイミングを、「手順」は実行内容と品質基準を指定する。</p><p>本ページの登録文は、この手動作成画面に直接貼り付けるための文章であり、ファイルへの変換は不要である。</p><h3>6. 最終的な導入優先順位</h3>
 <p>優先度1｜Excelの個人設定</p>
 <p>全ブック共通の書式・数式ルールを登録。最も手軽に始められる。</p>
 <p>優先度2｜PowerPointの承認済みテンプレート</p>
