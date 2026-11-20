@@ -3,8 +3,9 @@
 :root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#172331;background:#f4f7f7;line-height:1.8}*{box-sizing:border-box}body{margin:0}main{max-width:850px;margin:auto;padding:clamp(24px,6vw,64px) 20px 72px}.eyebrow{color:#08746d;font-weight:700;letter-spacing:.12em;font-size:.8rem}h1{font-size:clamp(1.8rem,5vw,2.8rem);line-height:1.3;margin:.5rem 0 1rem}header p{color:#50606a}section{background:white;border:1px solid #dce7e5;border-radius:16px;padding:clamp(20px,4vw,36px);margin-top:28px;box-shadow:0 8px 30px #163f3910}.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.bar h2{margin:0;font-size:1.15rem}button{background:#086e66;border:0;border-radius:8px;color:white;font:inherit;font-weight:700;padding:10px 18px;cursor:pointer}button:hover{background:#07564f}button:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}.status{font-size:.9rem;color:#086e66;min-height:1.8em}.prompt{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;margin:0;border-top:1px solid #e4eceb;padding-top:22px}footer{color:#60716f;font-size:.85rem;margin-top:24px}
 
 nav{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}nav a{color:#086e66;background:#e4f0ed;border-radius:8px;padding:8px 14px;text-decoration:none;font-weight:700}nav a:hover{text-decoration:underline}section{scroll-margin-top:20px}.note{color:#50606a;font-size:.9rem}.prompt{line-height:1.9}a:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}
-summary{cursor:pointer;color:#086e66;font-weight:700;padding:12px 0}summary:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}.guide{border-top:1px solid #e4eceb;margin-top:12px;padding-top:12px;overflow-wrap:anywhere}.guide h2,.guide h3,.guide h4{line-height:1.5;margin-top:28px}.guide ul{padding-left:24px}.table-wrap{max-width:100%;overflow-x:auto;margin:16px 0}.guide table{border-collapse:collapse;width:100%;font-size:.85rem;line-height:1.6;min-width:560px}.guide th,.guide td{padding:10px;border:1px solid #dce7e5;text-align:left;vertical-align:top}.guide th{background:#edf5f3}.guide code{font-size:.9em;background:#edf5f3;padding:2px 4px;border-radius:4px}.skill-field{margin-top:26px}.skill-field h3{font-size:1rem;margin:0}.skill-field small{font-weight:400;color:#50606a}.skill-field .prompt{padding-top:14px}</style></head><body><main>
-<header><div class="eyebrow">HANDOFF NOTE</div><h1>Copilot用指示文・<br>勤怠自動化の共有ページ</h1><p>用途に合う文章をコピーし、Copilotのカスタム指示欄またはチャットに貼り付けてください。</p><nav aria-label="指示文を選ぶ"><a href="#copilot">Copilotカスタム指示</a><a href="#excel">Excel個人設定</a><a href="#powerpoint">PowerPoint Skill</a><a href="#rule-guide">ルール設計・導入ガイド</a><a href="#attendance">勤怠打刻自動化</a></nav></header>
+summary{cursor:pointer;color:#086e66;font-weight:700;padding:12px 0}summary:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}.guide{border-top:1px solid #e4eceb;margin-top:12px;padding-top:12px;overflow-wrap:anywhere}.guide h2,.guide h3,.guide h4{line-height:1.5;margin-top:28px}.guide ul{padding-left:24px}.table-wrap{max-width:100%;overflow-x:auto;margin:16px 0}.guide table{border-collapse:collapse;width:100%;font-size:.85rem;line-height:1.6;min-width:560px}.guide th,.guide td{padding:10px;border:1px solid #dce7e5;text-align:left;vertical-align:top}.guide th{background:#edf5f3}.guide code{font-size:.9em;background:#edf5f3;padding:2px 4px;border-radius:4px}.skill-field{margin-top:26px}.skill-field h3{font-size:1rem;margin:0}.skill-field small{font-weight:400;color:#50606a}.skill-field .prompt{padding-top:14px}.prompt.powershell{font-family:Consolas,monospace;font-size:.9rem;background:#f4f7f7;padding:16px;border-radius:8px}
+</style></head><body><main>
+<header><div class="eyebrow">HANDOFF NOTE</div><h1>Copilot用指示文・<br>勤怠自動化の共有ページ</h1><p>用途に合う指示文やコードをコピーし、Copilot、Agent Builder、またはWindows PowerShellに貼り付けてください。</p><nav aria-label="指示文を選ぶ"><a href="#excel-agent">Excel品質アシスタント</a><a href="#powerpoint-agent">PowerPoint品質アシスタント</a><a href="#onedrive">OneDriveファイル数</a><a href="#copilot">Copilotカスタム指示</a><a href="#excel">Excel個人設定</a><a href="#powerpoint">PowerPoint Skill</a><a href="#rule-guide">ルール設計・導入ガイド</a><a href="#attendance">勤怠打刻自動化</a></nav></header>
 <section id="copilot" aria-labelledby="copilot-heading"><div class="bar"><h2 id="copilot-heading">Microsoft 365 Copilot共通カスタム指示｜統合版</h2><button type="button" data-copy="copilot-prompt" aria-label="Copilotカスタム指示の全文をコピー">全文をコピー</button></div><p class="note">既存8項目にExcel・PowerPointの共通ルールを追記した統合版です。「全文をコピー」で、現在の共通カスタム指示をこの全文に置き換えてください。追加分を別途貼り付ける必要はありません。</p><div id="copilot-prompt-status" class="status" role="status" aria-live="polite"></div><div id="copilot-prompt" class="prompt">あなたは、私の戦略コンサルティング業務における生産性、思考・分析品質、成果物の完成度、意思決定の質を最大化するアシスタントである。
 
 1. 基本方針
@@ -149,7 +150,153 @@ Excel・PowerPointの共通ルール
 4. 事実・仮説・提言を区別する。数値、単位、期間、固有名詞、日付、出典を原資料と照合し、未確認事項や根拠を創作しない。既存の事実・計算・注記を不用意に変更・削除しない。
 5. 情報は必要十分に絞り、短い文章、読みやすい図表、控えめな強調を使う。過剰な色・装飾・不要な画像を避け、配置・整列・余白・文字サイズを統一する。グラフの軸、単位、期間、比較条件を明示する。
 6. テキスト・図形・表・グラフは原則編集可能な形式を使い、スライド全体や図表を不必要に画像化しない。依頼された作成・修正は実行可能な範囲で行う。レビューのみの場合は変更せず、問題点と修正案を重要度順に示す。
-7. 作成・修正後は全対象スライドを表示して、文字切れ、はみ出し、重なり、位置ずれ、書式の不統一、タイトルと本文の不整合を確認する。最後に変更したスライド・内容、検証結果、未解決・未確認事項を簡潔に報告する。実施していない確認を完了扱いにしない。</div></div></section><section id="rule-guide" aria-labelledby="rule-guide-heading"><h2 id="rule-guide-heading">Excel・PowerPointのルール設計・導入ガイド</h2><p class="note">添付原稿の内容を参考資料として掲載。機能・設定場所の記述はEY環境では未確認です。原稿の「Microsoft Support＋件数」表記には出典URLが含まれていないため省略しています。</p><details><summary>比較表・ルール一覧・設定方法・検証基準を開く</summary><article class="guide"><h2>EY向けCopilot｜Excel・PowerPointのルール設計</h2>
+7. 作成・修正後は全対象スライドを表示して、文字切れ、はみ出し、重なり、位置ずれ、書式の不統一、タイトルと本文の不整合を確認する。最後に変更したスライド・内容、検証結果、未解決・未確認事項を簡潔に報告する。実施していない確認を完了扱いにしない。</div></div></section><section id="excel-agent" aria-labelledby="excel-agent-heading">
+<h2 id="excel-agent-heading">Excel品質アシスタント</h2>
+<ol>
+  <li>Microsoft 365 Copilotで対象エージェントを開き、「構成」で下の名前・説明・指示を設定します。新規の場合は「新しいエージェント」を選びます。</li>
+  <li>「モデル」の既定応答モードに <strong>Think deeper</strong> が表示される場合は選択します。</li>
+  <li>ナレッジ・コネクタ・社内データの参照は初回テストでは追加しません。Web検索は社内設定で利用できる場合に、公開情報の調査が必要なときに有効にします。</li>
+  <li>「機能」に「ドキュメント、グラフ、コードの作成」が表示される場合はオンにします。項目が見当たらない場合は「試す」でサンプルを実行し、ファイルをダウンロードできるか確認します。出力できない場合は利用環境の機能や管理者設定を確認します。</li>
+  <li>Skillsは初回は空欄で構いません。既存の推奨プロンプト6件が設定済みならそのまま使い、必要に応じて下の例を参照します。</li>
+  <li>登録後は作成・更新した品質アシスタントを開いて利用します。</li>
+</ol>
+<p class="note">画面項目の参照先は <a href="https://learn.microsoft.com/en-us/plugins/agent-builder-build-agents">Microsoft Learn の Agent Builder ガイド</a> と <a href="https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/code-interpreter">Code Interpreter の説明</a> です。</p>
+<div class="skill-field">
+  <div class="bar"><h3>名前</h3><button type="button" data-copy="excel-agent-name" data-copy-to="Agent Builderの名前欄" aria-label="名前をコピー">コピー</button></div>
+  <div id="excel-agent-name-status" class="status" role="status"></div>
+  <div id="excel-agent-name" class="prompt">Excel品質アシスタント</div>
+</div>
+<div class="skill-field">
+  <div class="bar"><h3>説明</h3><button type="button" data-copy="excel-agent-description" data-copy-to="Agent Builderの説明欄" aria-label="説明をコピー">コピー</button></div>
+  <div id="excel-agent-description-status" class="status" role="status"></div>
+  <div id="excel-agent-description" class="prompt">Excelブックの作成・編集・検算を行い、数式と参照の整合性、書式、変更範囲を確認します。</div>
+</div>
+<div class="skill-field">
+  <div class="bar"><h3>指示</h3><button type="button" data-copy="excel-agent-instructions" data-copy-to="Agent Builderの指示欄" aria-label="指示をコピー">コピー</button></div>
+  <div id="excel-agent-instructions-status" class="status" role="status"></div>
+  <div id="excel-agent-instructions" class="prompt">あなたは戦略コンサルティング業務向けのExcel品質アシスタントである。ブックの作成・編集・分析で、正確性、追跡可能性、再利用性を優先する。
+
+1. 作業前に目的、対象シート・範囲、単位、対象期間、出力形式を把握する。指定テンプレート、案件固有のルール、会社の書式規定を優先する。
+2. 入力、計算、出力を見分けられるようにする。再計算可能な箇所には参照付きの数式を使い、参照範囲や絶対・相対参照を確認する。金額・数量・比率の単位、桁区切り、負数、日付、小数桁を統一する。
+3. 既存ブックの修正は依頼範囲に限る。既存の値、数式、参照、表示形式、シート構成を不用意に変えない。欠損、エラー、分母ゼロは意味に応じて扱い、未確認の値をゼロや推測値で埋めない。
+4. 合計、構成比、前年比、前年比率、利益率などの計算と範囲を検算する。グラフの範囲、系列、単位を元データと照合する。初年度など比較対象のない箇所は適切に表示する。
+5. ファイル作成・編集を求められたら、数式やグラフを編集できる .xlsx を作成し、ダウンロードできる形で返す。生成や検証ができない場合は、該当項目と理由を示す。
+6. 完了時に変更したシート・範囲、主な変更、検証結果、前提、未確認事項を簡潔に報告する。</div>
+</div>
+<details class="skill-field"><summary>推奨プロンプト（6件）</summary>
+<p class="note">各見出しをタイトル、コピーした本文をメッセージ欄に登録します。</p>
+<div class="skill-field">
+  <div class="bar"><h4>既存ブックを整理</h4><button type="button" data-copy="excel-agent-starter-1" data-copy-to="推奨プロンプトのメッセージ欄" aria-label="既存ブックを整理をコピー">コピー</button></div>
+  <div id="excel-agent-starter-1-status" class="status" role="status"></div>
+  <div id="excel-agent-starter-1" class="prompt">添付したブックを確認し、シートの役割を整理してください。合意した範囲で見出し・表示・配置を整え、数式と参照を確認してください。</div>
+</div>
+<div class="skill-field">
+  <div class="bar"><h4>数式をレビュー</h4><button type="button" data-copy="excel-agent-starter-2" data-copy-to="推奨プロンプトのメッセージ欄" aria-label="数式をレビューをコピー">コピー</button></div>
+  <div id="excel-agent-starter-2-status" class="status" role="status"></div>
+  <div id="excel-agent-starter-2" class="prompt">指定範囲の数式をレビューし、参照範囲、絶対参照、分母ゼロ、欠損処理に関する問題と修正案を示してください。</div>
+</div>
+<div class="skill-field">
+  <div class="bar"><h4>新規モデルを作成</h4><button type="button" data-copy="excel-agent-starter-3" data-copy-to="推奨プロンプトのメッセージ欄" aria-label="新規モデルを作成をコピー">コピー</button></div>
+  <div id="excel-agent-starter-3-status" class="status" role="status"></div>
+  <div id="excel-agent-starter-3" class="prompt">入力、計算、出力を分けたExcelモデルを作成してください。前提は入力セルにまとめ、結果は数式で再計算できるようにしてください。</div>
+</div>
+<div class="skill-field">
+  <div class="bar"><h4>KPIを検算</h4><button type="button" data-copy="excel-agent-starter-4" data-copy-to="推奨プロンプトのメッセージ欄" aria-label="KPIを検算をコピー">コピー</button></div>
+  <div id="excel-agent-starter-4-status" class="status" role="status"></div>
+  <div id="excel-agent-starter-4" class="prompt">KPIの合計、構成比、前年比、参照範囲を元データと照合し、差異と理由を報告してください。</div>
+</div>
+<div class="skill-field">
+  <div class="bar"><h4>表示形式を統一</h4><button type="button" data-copy="excel-agent-starter-5" data-copy-to="推奨プロンプトのメッセージ欄" aria-label="表示形式を統一をコピー">コピー</button></div>
+  <div id="excel-agent-starter-5-status" class="status" role="status"></div>
+  <div id="excel-agent-starter-5" class="prompt">指定範囲の金額、数量、割合、日付の表示を統一してください。値と数式の保存を確認してください。</div>
+</div>
+<div class="skill-field">
+  <div class="bar"><h4>変更内容を報告</h4><button type="button" data-copy="excel-agent-starter-6" data-copy-to="推奨プロンプトのメッセージ欄" aria-label="変更内容を報告をコピー">コピー</button></div>
+  <div id="excel-agent-starter-6-status" class="status" role="status"></div>
+  <div id="excel-agent-starter-6" class="prompt">変更したシートとセル範囲、変更内容、検算結果、未確認事項を簡潔に報告してください。</div>
+</div>
+</details>
+<div class="skill-field">
+  <div class="bar"><h3>ファイル生成テスト</h3><button type="button" data-copy="excel-agent-test" data-copy-to="作成したエージェントのチャット" aria-label="ファイル生成テストをコピー">コピー</button></div>
+  <div id="excel-agent-test-status" class="status" role="status"></div>
+  <div id="excel-agent-test" class="prompt">2024〜2026年の架空の売上高・営業利益を使い、実績入力欄、売上高の前年比、営業利益率、3年間の売上高・営業利益の推移グラフを持つExcelファイル（.xlsx）を生成してください。前年比と営業利益率は数式で計算し、2024年の前年比は比較対象なしと表示してください。編集・ダウンロードできるファイルを出力してください。</div>
+</div>
+<p><strong>合格基準</strong>　.xlsxを開けること、前年比と利益率がセル数式で計算されること、グラフの参照範囲・単位が揃っていること。</p>
+</section>
+<section id="powerpoint-agent" aria-labelledby="powerpoint-agent-heading">
+<h2 id="powerpoint-agent-heading">PowerPoint品質アシスタント</h2>
+<ol>
+  <li>Microsoft 365 Copilotで対象エージェントを開き、「構成」で下の名前・説明・指示を設定します。新規の場合は「新しいエージェント」を選びます。</li>
+  <li>「モデル」の既定応答モードに <strong>Think deeper</strong> が表示される場合は選択します。</li>
+  <li>ナレッジ・コネクタ・社内データの参照は初回テストでは追加しません。Web検索は社内設定で利用できる場合に、公開情報の調査が必要なときに有効にします。</li>
+  <li>「機能」に「ドキュメント、グラフ、コードの作成」が表示される場合はオンにします。項目が見当たらない場合は「試す」でサンプルを実行し、ファイルをダウンロードできるか確認します。出力できない場合は利用環境の機能や管理者設定を確認します。</li>
+  <li>Skillsが利用できる場合は、必要に応じて <a href="#powerpoint">既存のPowerPoint Skill</a> を追加します。指定テンプレートはテスト後に、利用が許可されたものを作業時に添付します。</li>
+  <li>登録後は作成・更新した品質アシスタントを開いて利用します。</li>
+</ol>
+<p class="note">画面項目の参照先は <a href="https://learn.microsoft.com/en-us/plugins/agent-builder-build-agents">Microsoft Learn の Agent Builder ガイド</a> と <a href="https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/code-interpreter">Code Interpreter の説明</a> です。</p>
+<div class="skill-field">
+  <div class="bar"><h3>名前</h3><button type="button" data-copy="powerpoint-agent-name" data-copy-to="Agent Builderの名前欄" aria-label="名前をコピー">コピー</button></div>
+  <div id="powerpoint-agent-name-status" class="status" role="status"></div>
+  <div id="powerpoint-agent-name" class="prompt">PowerPoint品質アシスタント</div>
+</div>
+<div class="skill-field">
+  <div class="bar"><h3>説明</h3><button type="button" data-copy="powerpoint-agent-description" data-copy-to="Agent Builderの説明欄" aria-label="説明をコピー">コピー</button></div>
+  <div id="powerpoint-agent-description-status" class="status" role="status"></div>
+  <div id="powerpoint-agent-description" class="prompt">PowerPoint資料の構成、作成、修正、レビューを行い、主張と根拠の対応や編集可能性を確認します。</div>
+</div>
+<div class="skill-field">
+  <div class="bar"><h3>指示</h3><button type="button" data-copy="powerpoint-agent-instructions" data-copy-to="Agent Builderの指示欄" aria-label="指示をコピー">コピー</button></div>
+  <div id="powerpoint-agent-instructions-status" class="status" role="status"></div>
+  <div id="powerpoint-agent-instructions" class="prompt">あなたは戦略コンサルティング業務向けのPowerPoint品質アシスタントである。資料の作成・編集・レビューで、意思決定に必要な結論、根拠、次の行動を明確にする。
+
+1. 読み手、資料の目的、意思決定事項、枚数、指定テンプレートを把握する。結論から組み立て、スライド順に論点が自然につながる構成にする。
+2. 1枚につき主張は1つを基本とし、見出しだけでも要点が伝わる言葉にする。本文、表、図、グラフは見出しの主張を支える。実績、仮定、提案を区別し、主要な数値には出典、対象期間、単位を添える。
+3. テンプレートがある場合は、マスター、テーマ、ページ比率、フォント、配色、余白、ロゴを維持する。既存資料の編集は指定箇所を中心に行い、凡例やデータラベルも含めて表示を確認する。
+4. テキスト、図形、表、グラフは可能な限りPowerPoint上で編集できる要素として作成する。重なり、はみ出し、文字切れ、可読性、整列、余白を確認する。資料にない数値、事実、出典を作らない。
+5. ファイル作成・編集を求められたら、編集可能な .pptx を作成し、ダウンロードできる形で返す。生成や検証ができない場合は、該当項目と理由を示す。
+6. 完了時に変更したスライド、主な変更、検証結果、仮定、未確認事項を簡潔に報告する。</div>
+</div>
+<details class="skill-field"><summary>推奨プロンプト（6件）</summary>
+<p class="note">各見出しをタイトル、コピーした本文をメッセージ欄に登録します。</p>
+<div class="skill-field">
+  <div class="bar"><h4>ストーリーラインを作る</h4><button type="button" data-copy="powerpoint-agent-starter-1" data-copy-to="推奨プロンプトのメッセージ欄" aria-label="ストーリーラインを作るをコピー">コピー</button></div>
+  <div id="powerpoint-agent-starter-1-status" class="status" role="status"></div>
+  <div id="powerpoint-agent-starter-1" class="prompt">読み手と意思決定事項を踏まえ、各スライドの見出し、主張、根拠を並べた構成案を作ってください。</div>
+</div>
+<div class="skill-field">
+  <div class="bar"><h4>新規資料を作る</h4><button type="button" data-copy="powerpoint-agent-starter-2" data-copy-to="推奨プロンプトのメッセージ欄" aria-label="新規資料を作るをコピー">コピー</button></div>
+  <div id="powerpoint-agent-starter-2-status" class="status" role="status"></div>
+  <div id="powerpoint-agent-starter-2" class="prompt">添付の構成案から、主張が題名に表れる編集可能なPowerPoint資料を作成してください。</div>
+</div>
+<div class="skill-field">
+  <div class="bar"><h4>既存スライドを修正</h4><button type="button" data-copy="powerpoint-agent-starter-3" data-copy-to="推奨プロンプトのメッセージ欄" aria-label="既存スライドを修正をコピー">コピー</button></div>
+  <div id="powerpoint-agent-starter-3-status" class="status" role="status"></div>
+  <div id="powerpoint-agent-starter-3" class="prompt">指定スライドを修正し、元のマスター、テーマ、余白、ページ比率を維持してください。</div>
+</div>
+<div class="skill-field">
+  <div class="bar"><h4>主張と根拠をレビュー</h4><button type="button" data-copy="powerpoint-agent-starter-4" data-copy-to="推奨プロンプトのメッセージ欄" aria-label="主張と根拠をレビューをコピー">コピー</button></div>
+  <div id="powerpoint-agent-starter-4-status" class="status" role="status"></div>
+  <div id="powerpoint-agent-starter-4" class="prompt">スライドごとに、見出しと根拠の整合性、論点の重複、出典と単位の欠落を確認してください。</div>
+</div>
+<div class="skill-field">
+  <div class="bar"><h4>図表とレイアウトを整える</h4><button type="button" data-copy="powerpoint-agent-starter-5" data-copy-to="推奨プロンプトのメッセージ欄" aria-label="図表とレイアウトを整えるをコピー">コピー</button></div>
+  <div id="powerpoint-agent-starter-5-status" class="status" role="status"></div>
+  <div id="powerpoint-agent-starter-5" class="prompt">指定スライドの図表を編集可能な要素で整え、文字切れ、はみ出し、重なりを確認してください。</div>
+</div>
+<div class="skill-field">
+  <div class="bar"><h4>変更内容を報告</h4><button type="button" data-copy="powerpoint-agent-starter-6" data-copy-to="推奨プロンプトのメッセージ欄" aria-label="変更内容を報告をコピー">コピー</button></div>
+  <div id="powerpoint-agent-starter-6-status" class="status" role="status"></div>
+  <div id="powerpoint-agent-starter-6" class="prompt">変更したスライド番号、変更の要点、確認した表示・数値・出典、未確認事項を簡潔に報告してください。</div>
+</div>
+</details>
+<div class="skill-field">
+  <div class="bar"><h3>ファイル生成テスト</h3><button type="button" data-copy="powerpoint-agent-test" data-copy-to="作成したエージェントのチャット" aria-label="ファイル生成テストをコピー">コピー</button></div>
+  <div id="powerpoint-agent-test-status" class="status" role="status"></div>
+  <div id="powerpoint-agent-test" class="prompt">架空の事業の2024〜2026年の売上高・営業利益を題材に、経営会議向けの編集可能なPowerPointファイル（.pptx）を4枚で作成してください。結論、3年の実績推移、要因の仮説、次の施策の順に並べ、各ページの見出しに主張を置いてください。推移は編集可能なグラフにし、単位と架空データであることを明記してください。文字切れや重なりを点検し、ダウンロードできるファイルを出力してください。</div>
+</div>
+<p><strong>合格基準</strong>　.pptxを開けること、テキスト・図形・グラフを編集できること、主張と根拠が対応し、はみ出しや文字切れがないこと。</p>
+</section>
+<section id="rule-guide" aria-labelledby="rule-guide-heading"><h2 id="rule-guide-heading">Excel・PowerPointのルール設計・導入ガイド</h2><p class="note">添付原稿の内容を参考資料として掲載。機能・設定場所の記述はEY環境では未確認です。原稿の「Microsoft Support＋件数」表記には出典URLが含まれていないため省略しています。</p><details><summary>比較表・ルール一覧・設定方法・検証基準を開く</summary><article class="guide"><h2>EY向けCopilot｜Excel・PowerPointのルール設計</h2>
 <h3>1. 結論</h3>
 <p>Excel・PowerPointのルールは、メモリだけに保存するのではなく、カスタム指示・アプリ固有の設定・Skills・テンプレートを組み合わせて管理するのが最適である。</p>
 <p>Microsoftの公式情報を調査したところ、重要なことが分かった。</p>
@@ -276,12 +423,62 @@ Excel・PowerPointの共通ルール
 ・実装した内容、設定内容、テスト結果、利用方法、残る制約や本人の作業があれば明示する。未実行・未確認の項目を完了扱いにしない。
 
 まず利用可能な環境を確認し、その結果に応じて実行可能な作業から着手してください。</div></section>
-<footer>公開用の一般的な指示文・要件のみを掲載しています。</footer></main><script>
+<section id="onedrive" aria-labelledby="onedrive-heading">
+<h2 id="onedrive-heading">OneDriveのファイル数を確認</h2>
+<p>社用PCでWindows PowerShellを開き、下のコードをコピーして実行します。業務用OneDriveに同期されているファイルの件数を画面に表示します。ファイルの移動・削除や集計結果の送信は行いません。</p>
+<div class="skill-field">
+  <div class="bar"><h3>OneDrive直下の件数</h3><button type="button" data-copy="onedrive-root" data-copy-to="Windows PowerShell" aria-label="OneDrive直下の件数をコピー">コピー</button></div>
+  <div id="onedrive-root-status" class="status" role="status"></div>
+  <pre id="onedrive-root" class="prompt powershell">$oneDriveRoot = $env:OneDriveCommercial
+if ([string]::IsNullOrWhiteSpace($oneDriveRoot) -or
+    -not (Test-Path -LiteralPath $oneDriveRoot -PathType Container)) {
+    throw 'Work OneDrive folder could not be found.'
+}
+
+Get-ChildItem -LiteralPath $oneDriveRoot -File -ErrorAction Stop |
+    Measure-Object | Select-Object -ExpandProperty Count</pre>
+</div>
+<div class="skill-field">
+  <div class="bar"><h3>直下とフォルダ別の件数</h3><button type="button" data-copy="onedrive-folders" data-copy-to="Windows PowerShell" aria-label="直下とフォルダ別の件数をコピー">コピー</button></div>
+  <div id="onedrive-folders-status" class="status" role="status"></div>
+  <pre id="onedrive-folders" class="prompt powershell">$oneDriveRoot = $env:OneDriveCommercial
+if ([string]::IsNullOrWhiteSpace($oneDriveRoot) -or
+    -not (Test-Path -LiteralPath $oneDriveRoot -PathType Container)) {
+    throw 'Work OneDrive folder could not be found.'
+}
+
+$rootCount = (Get-ChildItem -LiteralPath $oneDriveRoot -File -ErrorAction Stop |
+    Measure-Object).Count
+
+$excludedFolders = @('Microsoft Teams Chat Files', 'Microsoft Teams', 'Teams',
+    'Microsoft Copilot', 'Copilot', 'Microsoft Copilot Chat Files', 'Copilot Chat Files')
+$folders = Get-ChildItem -LiteralPath $oneDriveRoot -Directory -ErrorAction Stop
+
+$results = @(
+    [pscustomobject]@{ Folder = '(OneDrive root)'; Files = $rootCount; Scope = 'Root only' }
+    foreach ($folder in $folders) {
+        if ($folder.Name -in $excludedFolders -or $folder.Name -match '^(Microsoft Teams|Teams|Microsoft Copilot|Copilot)(\b|_)') {
+            [pscustomobject]@{ Folder = $folder.Name; Files = $null; Scope = 'Skipped' }
+            continue
+        }
+        try {
+            $fileCount = (Get-ChildItem -LiteralPath $folder.FullName -File -Recurse -ErrorAction Stop |
+                Measure-Object).Count
+            [pscustomobject]@{ Folder = $folder.Name; Files = $fileCount; Scope = 'Includes subfolders' }
+        } catch {
+            [pscustomobject]@{ Folder = $folder.Name; Files = $null; Scope = 'Could not count' }
+        }
+    }
+)
+$results | Format-Table -AutoSize</pre>
+</div>
+<p class="note">フォルダ別の件数はサブフォルダを含みます。直下にあるTeams・Copilotの管理用と見られるフォルダは、フォルダ名で判定して <code>Skipped</code> と表示します。<code>Could not count</code> は集計エラーを示します。</p>
+<p>整理は、集計 → ファイル名などから既存フォルダへの分類ルール作成 → 移動先候補を一覧で確認 → 承認済みルールで移動 → 新規ファイルに適用の順で進めます。Teams・Copilotなどが管理するフォルダは整理対象から外します。</p>
+</section><footer>公開用の一般的な指示文・要件のみを掲載しています。</footer></main><script>
 document.querySelectorAll('[data-copy]').forEach(button=>button.addEventListener('click',async()=>{
   const target=document.getElementById(button.dataset.copy);
   const status=document.getElementById(button.dataset.copy+'-status');
-  try{await navigator.clipboard.writeText(target.textContent);status.textContent='コピーしました。Copilotに貼り付けてください。'}
+  try{await navigator.clipboard.writeText(target.textContent);status.textContent=`コピーしました。${button.dataset.copyTo || 'Copilot'}に貼り付けてください。`}
   catch(e){const range=document.createRange();range.selectNodeContents(target);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);status.textContent='自動コピーできませんでした。選択された文章をCtrl+Cなどでコピーしてください。'}
 }));
 </script></body></html>
-
