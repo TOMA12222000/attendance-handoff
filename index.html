@@ -481,7 +481,7 @@ $results | Format-Table -AutoSize</pre>
   </div>
   <ol>
     <li>コードをコピーし、社用PCのWindows PowerShellに貼り付けて実行します。</li>
-    <li>案件の分類も行う場合は、<code>略称=既存の案件フォルダ名</code> または既存のフォルダ名を、カンマ区切りで入力します。案件を指定しない場合はEnterを押します。</li>
+    <li>案件の分類も行う場合は、<code>略称=既存の案件フォルダ名</code> または既存のフォルダ名をカンマ区切りで入力します。フォルダ名が不明なら略称だけ入力し、表示された一覧から移動先の番号を入力します。案件を指定しない場合はEnterを押します。</li>
     <li>候補一覧を確認し、移動するファイルの番号だけを <code>1,3,4</code> のように入力します。確認だけならEnterで終了します。</li>
   </ol>
   <p>研修資料は「研修」、領収書は「経費」、健康保険の資格確認書は「プロフィール」が候補です。「経費」がなければ、そのフォルダへの移動を選んだときに作成します。<code>.url</code> などのショートカットは保留します。</p>
@@ -500,7 +500,55 @@ $results | Format-Table -AutoSize</pre>
     $documents = $rootFolders | Where-Object Name -eq 'ドキュメント' | Select-Object -First 1
 
     $specialFolders = @('研修', '経費', 'プロフィール')
-    $entryText = Read-Host '案件名や略称を登録します（例：略称=案件フォルダ名,案件フォルダ名）。省略はEnter'
+    $resolveAliases = {
+        param($entries, $availableFolders)
+
+        $builtIn = @('研修', '経費', 'プロフィール')
+        $destinations = @($availableFolders | Where-Object {
+            $_.Name -notin (@('ドキュメント', 'Documents') + $builtIn)
+        } | Sort-Object Name)
+        $confirmed = foreach ($entry in ($entries -split '[,、，]' | Where-Object { $_.Trim() })) {
+            $parts = $entry.Trim() -split '[=＝]', 2
+            $keyword = $parts[0].Trim()
+            $requestedName = $parts[-1].Trim()
+            if ($parts.Count -eq 1 -and $keyword -in $builtIn) { continue }
+            if (-not $keyword) {
+                Write-Warning "キーワードが空のルールはスキップしました：$entry"
+                continue
+            }
+
+            $folder = $destinations | Where-Object Name -eq $requestedName | Select-Object -First 1
+            if ($null -eq $folder) {
+                if ($destinations.Count -eq 0) {
+                    Write-Warning "選べる案件フォルダがありません：$keyword"
+                    continue
+                }
+                Write-Host ("「{0}」の移動先を、実際のOneDriveフォルダから選んでください。" -f $keyword)
+                for ($i = 0; $i -lt $destinations.Count; $i++) {
+                    Write-Host ("{0}. {1}" -f ($i + 1), $destinations[$i].Name)
+                }
+                $choiceText = Read-Host '移動先の番号（Enterはこの案件ルールをスキップ）'
+                if ([string]::IsNullOrWhiteSpace($choiceText)) { continue }
+                $choice = 0
+                if (-not [int]::TryParse($choiceText, [ref]$choice) -or
+                    $choice -lt 1 -or $choice -gt $destinations.Count) {
+                    Write-Warning "無効な番号のため、案件ルールをスキップしました：$keyword"
+                    continue
+                }
+                $folder = $destinations[$choice - 1]
+            }
+
+            if ($folder.Name -match '[,、，]') {
+                Write-Warning "カンマを含むフォルダ名は案件ルールに登録できません：$($folder.Name)"
+                continue
+            }
+            Write-Host ("案件ルール：{0} → {1}" -f $keyword, $folder.Name)
+            "{0}={1}" -f $keyword, $folder.Name
+        }
+        $confirmed -join ','
+    }
+    $entryText = Read-Host '案件名や略称（例：略称=フォルダ名,フォルダ名）。省略はEnter'
+    $entryText = &amp; $resolveAliases $entryText $rootFolders
     $rules = @(
         [pscustomobject]@{ Folder = '研修'; Pattern = '研修|トレーニング|(?&lt;![a-z])training(?![a-z])' }
         [pscustomobject]@{ Folder = '経費'; Pattern = '領収書|(?&lt;![a-z])receipt(?![a-z])' }
@@ -646,7 +694,7 @@ $results | Format-Table -AutoSize</pre>
     <button type="button" data-copy="onedrive-daily-code" data-copy-to="Windows PowerShell" aria-label="日次実行の設定コードをコピー">設定コードをコピー</button>
   </div>
   <ol>
-    <li>社用PCのWindows PowerShellに貼り付け、案件ルールと実行時刻を入力します。時刻の初期値は12:00です。PCが使える時間を指定してください。</li>
+    <li>社用PCのWindows PowerShellに貼り付け、案件ルールと実行時刻を入力します。フォルダ名が不明なら略称だけ入力し、一覧から移動先の番号を選びます。時刻の初期値は12:00です。PCが使える時間を指定してください。</li>
     <li><code>AUTO</code> で1日1回自動移動、<code>REPORT</code> で1日1回候補を記録します。Enterだけで終了すると登録されません。</li>
     <li>「登録済み」と次回実行時刻が表示されたことを確認してください。初回実行後の結果は <code>%LOCALAPPDATA%\OneDriveFileSort\latest.log</code> に記録されます。</li>
   </ol>
@@ -671,7 +719,57 @@ $results | Format-Table -AutoSize</pre>
         throw 'Windows PowerShellが見つかりません。'
     }
 
+    $resolveAliases = {
+        param($entries, $availableFolders)
+
+        $builtIn = @('研修', '経費', 'プロフィール')
+        $destinations = @($availableFolders | Where-Object {
+            $_.Name -notin (@('ドキュメント', 'Documents') + $builtIn)
+        } | Sort-Object Name)
+        $confirmed = foreach ($entry in ($entries -split '[,、，]' | Where-Object { $_.Trim() })) {
+            $parts = $entry.Trim() -split '[=＝]', 2
+            $keyword = $parts[0].Trim()
+            $requestedName = $parts[-1].Trim()
+            if ($parts.Count -eq 1 -and $keyword -in $builtIn) { continue }
+            if (-not $keyword) {
+                Write-Warning "キーワードが空のルールはスキップしました：$entry"
+                continue
+            }
+
+            $folder = $destinations | Where-Object Name -eq $requestedName | Select-Object -First 1
+            if ($null -eq $folder) {
+                if ($destinations.Count -eq 0) {
+                    Write-Warning "選べる案件フォルダがありません：$keyword"
+                    continue
+                }
+                Write-Host ("「{0}」の移動先を、実際のOneDriveフォルダから選んでください。" -f $keyword)
+                for ($i = 0; $i -lt $destinations.Count; $i++) {
+                    Write-Host ("{0}. {1}" -f ($i + 1), $destinations[$i].Name)
+                }
+                $choiceText = Read-Host '移動先の番号（Enterはこの案件ルールをスキップ）'
+                if ([string]::IsNullOrWhiteSpace($choiceText)) { continue }
+                $choice = 0
+                if (-not [int]::TryParse($choiceText, [ref]$choice) -or
+                    $choice -lt 1 -or $choice -gt $destinations.Count) {
+                    Write-Warning "無効な番号のため、案件ルールをスキップしました：$keyword"
+                    continue
+                }
+                $folder = $destinations[$choice - 1]
+            }
+
+            if ($folder.Name -match '[,、，]') {
+                Write-Warning "カンマを含むフォルダ名は案件ルールに登録できません：$($folder.Name)"
+                continue
+            }
+            Write-Host ("案件ルール：{0} → {1}" -f $keyword, $folder.Name)
+            "{0}={1}" -f $keyword, $folder.Name
+        }
+        $confirmed -join ','
+    }
+    $rootFolders = @(Get-ChildItem -LiteralPath $root -Directory |
+        Where-Object { $_.Name -notmatch 'Teams|Copilot' -and -not $_.LinkType })
     $aliases = Read-Host '案件ルール（例：略称=フォルダ名,フォルダ名）。案件指定なしはEnter'
+    $aliases = &amp; $resolveAliases $aliases $rootFolders
     $timeInput = Read-Host '毎日の実行時刻（24時間制 HH:mm）。12:00ならEnter'
     if ([string]::IsNullOrWhiteSpace($timeInput)) { $timeInput = '12:00' }
     if ($timeInput -notmatch '^(?:[01][0-9]|2[0-3]):[0-5][0-9]$') {
