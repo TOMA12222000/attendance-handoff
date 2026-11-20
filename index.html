@@ -5,7 +5,7 @@
 nav{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}nav a{color:#086e66;background:#e4f0ed;border-radius:8px;padding:8px 14px;text-decoration:none;font-weight:700}nav a:hover{text-decoration:underline}section{scroll-margin-top:20px}.note{color:#50606a;font-size:.9rem}.prompt{line-height:1.9}a:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}
 summary{cursor:pointer;color:#086e66;font-weight:700;padding:12px 0}summary:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}.guide{border-top:1px solid #e4eceb;margin-top:12px;padding-top:12px;overflow-wrap:anywhere}.guide h2,.guide h3,.guide h4{line-height:1.5;margin-top:28px}.guide ul{padding-left:24px}.table-wrap{max-width:100%;overflow-x:auto;margin:16px 0}.guide table{border-collapse:collapse;width:100%;font-size:.85rem;line-height:1.6;min-width:560px}.guide th,.guide td{padding:10px;border:1px solid #dce7e5;text-align:left;vertical-align:top}.guide th{background:#edf5f3}.guide code{font-size:.9em;background:#edf5f3;padding:2px 4px;border-radius:4px}.skill-field{margin-top:26px}.skill-field h3{font-size:1rem;margin:0}.skill-field small{font-weight:400;color:#50606a}.skill-field .prompt{padding-top:14px}.prompt.powershell{font-family:Consolas,monospace;font-size:.9rem;background:#f4f7f7;padding:16px;border-radius:8px}
 </style></head><body><main>
-<header><div class="eyebrow">HANDOFF NOTE</div><h1>Copilot用指示文・<br>勤怠自動化の共有ページ</h1><p>用途に合う指示文やコードをコピーし、Copilot、Agent Builder、またはWindows PowerShellに貼り付けてください。</p><nav aria-label="指示文を選ぶ"><a href="#excel-agent">Excel品質アシスタント</a><a href="#powerpoint-agent">PowerPoint品質アシスタント</a><a href="#onedrive">OneDriveファイル数</a><a href="#onedrive-classification">OneDriveの分類候補</a><a href="#onedrive-daily">OneDriveの日次実行</a><a href="#copilot">Copilotカスタム指示</a><a href="#excel">Excel個人設定</a><a href="#powerpoint">PowerPoint Skill</a><a href="#rule-guide">ルール設計・導入ガイド</a><a href="#attendance">勤怠打刻自動化</a><a href="#attendance-powershell-test">リシテア模擬テスト</a></nav></header>
+<header><div class="eyebrow">HANDOFF NOTE</div><h1>Copilot用指示文・<br>勤怠自動化の共有ページ</h1><p>用途に合う指示文やコードをコピーし、Copilot、Agent Builder、またはWindows PowerShellに貼り付けてください。</p><nav aria-label="指示文を選ぶ"><a href="#excel-agent">Excel品質アシスタント</a><a href="#powerpoint-agent">PowerPoint品質アシスタント</a><a href="#onedrive">OneDriveファイル数</a><a href="#onedrive-classification">OneDriveの分類候補</a><a href="#onedrive-daily">OneDriveの日次実行</a><a href="#copilot">Copilotカスタム指示</a><a href="#excel">Excel個人設定</a><a href="#powerpoint">PowerPoint Skill</a><a href="#rule-guide">ルール設計・導入ガイド</a><a href="#attendance">勤怠打刻自動化</a><a href="#attendance-powershell-test">リシテア模擬テスト</a><a href="#attendance-auto-start">出勤ボタンの自動操作</a></nav></header>
 <section id="copilot" aria-labelledby="copilot-heading"><div class="bar"><h2 id="copilot-heading">Microsoft 365 Copilot共通カスタム指示｜統合版</h2><button type="button" data-copy="copilot-prompt" aria-label="Copilotカスタム指示の全文をコピー">全文をコピー</button></div><p class="note">既存8項目にExcel・PowerPointの共通ルールを追記した統合版です。「全文をコピー」で、現在の共通カスタム指示をこの全文に置き換えてください。追加分を別途貼り付ける必要はありません。</p><div id="copilot-prompt-status" class="status" role="status" aria-live="polite"></div><div id="copilot-prompt" class="prompt">あなたは、私の戦略コンサルティング業務における生産性、思考・分析品質、成果物の完成度、意思決定の質を最大化するアシスタントである。
 
 1. 基本方針
@@ -1613,6 +1613,235 @@ try {
     try { [IO.File]::Replace($temporary,$file.FullName,[System.Management.Automation.Language.NullString]::Value) }
     finally { [IO.File]::Delete($temporary) }
     Write-Host '更新完了。登録済みの退勤タスクは次回起動時にこのファイルを読み込みます。'
+}
+</pre></details>
+</div>
+<div id="attendance-auto-start" class="skill-field">
+<h3>出勤ボタンの自動操作</h3>
+<p>Windowsへの最初のログオンが実際の始業と一致する運用が前提です。勤務前にも同じ時間帯にログオンする日は、事前に出勤専用タスクを無効にして公式画面から打刻してください。</p>
+<ol>
+<li>ITと勤怠担当に、自動クリック、本人の対話セッションでのPADの外部起動、必要なライセンス、確認画面なしでの起動を許可されているか確認します。PADの起動確認画面が出る構成では追加操作が必要です。管理設定と通常のSSOを使います。 <a href="https://learn.microsoft.com/en-us/power-automate/desktop-flows/run-desktop-flows-url-shortcuts">Microsoftの起動条件</a></li>
+<li>管理されたEdgeで通常のSSOを使い、公式の出勤画面・当日の勤怠履歴・勤務予定や全日休暇の表示を閲覧します。実際の登録ボタン、登録済み状態、読み込み中・ログイン画面・エラー状態を識別できるページ要素を、PADのブラウザー操作でEY端末内に登録します。この段階では打刻ボタンのクリックを追加せず、ページ確認に必要な操作だけにします。社内URLや画面要素はEY端末内に保存してください。</li>
+<li>入力変数なしの出勤専用フローを作り、下の処理順で構成します。出勤履歴と勤務予定の判定に使える要素が見つからない場合は、実送信に進めません。</li>
+</ol>
+
+<details><summary>PADフローの処理順と貼り付け用コード</summary>
+<p><strong>開始を確認する。</strong> PADの「PowerShell スクリプトの実行」に下の開始コードを入れ、出力の前後空白を除きます。<code>READY|32桁の英小文字・数字|yyyy-MM-dd</code> の形式のときだけ、<code>|</code> で分割し、2番目を変数 <code>Ticket</code>、3番目を対象日として保持します。それ以外は終了します。</p>
+<div class="bar"><strong><code>Begin</code></strong><button type="button" data-copy="attendance-pad-begin" data-copy-to="PADのPowerShellアクション" aria-label="Begin のPowerShellコードをコピー">コピー</button></div><p id="attendance-pad-begin-status" class="status" role="status"></p><pre class="prompt powershell" id="attendance-pad-begin">&amp; (Join-Path $env:LOCALAPPDATA 'LysitheaAutoStart\AutoStart.ps1') -Mode Begin</pre>
+<p><strong>画面を検証する。</strong> 管理Edgeで公式入口を開き、認証後のページ要素が出るか3秒間隔で最大15回、読み取り操作だけを行います。MFA要求、ログイン未完了、通信断、画面の不一致、対象日・本人・勤務予定の不一致や不明、休暇表示があれば送信せず終了します。当日の正式な出勤履歴がある場合は <code>Existing</code> を通知して終了します。空欄と履歴の読み込み失敗を区別します。</p>
+<div class="bar"><strong><code>Existing</code></strong><button type="button" data-copy="attendance-pad-existing" data-copy-to="PADのPowerShellアクション" aria-label="Existing のPowerShellコードをコピー">コピー</button></div><p id="attendance-pad-existing-status" class="status" role="status"></p><pre class="prompt powershell" id="attendance-pad-existing">&amp; (Join-Path $env:LOCALAPPDATA 'LysitheaAutoStart\AutoStart.ps1') -Mode Existing -Ticket '%Ticket%'</pre>
+<p><strong>送信可否を確認する。</strong> 出勤履歴の未登録と公式ボタンをクリック直前に再確認してから、予約コードを実行します。<code>SIMULATED</code> は送信せず終了します。その他は <code>SEND</code> の完全一致のときだけ次の処理へ進みます。</p>
+<div class="bar"><strong><code>Reserve</code></strong><button type="button" data-copy="attendance-pad-reserve" data-copy-to="PADのPowerShellアクション" aria-label="Reserve のPowerShellコードをコピー">コピー</button></div><p id="attendance-pad-reserve-status" class="status" role="status"></p><pre class="prompt powershell" id="attendance-pad-reserve">&amp; (Join-Path $env:LOCALAPPDATA 'LysitheaAutoStart\AutoStart.ps1') -Mode Reserve -Ticket '%Ticket%'</pre>
+<p><strong>本番用のクリックを追加する。</strong> 無送信テストの合格と会社の承認後にだけ、<code>SEND</code> の直後に「Web ページのボタンを押す」を1回追加します。公式の現在時刻の出勤ボタンを要素で特定し、時刻を入力する画面や座標クリックを使いません。クリック、フロー全体、例外処理の自動再試行を設定せず、クリック失敗時も下の失敗処理へ進めます。</p>
+<p><strong>結果を判定する。</strong> クリック後は当日の公式履歴を読み直し、対象者・対象日の出勤が今回の操作後に表示されたことを確認したら <code>Confirmed</code> を通知します。表示なし・通信断・認証画面への遷移・例外は <code>Failed</code> を通知して終了します。送信済みか不明な場合は履歴の確認を優先し、クリックを繰り返しません。</p>
+<div class="bar"><strong><code>Confirmed</code></strong><button type="button" data-copy="attendance-pad-confirmed" data-copy-to="PADのPowerShellアクション" aria-label="Confirmed のPowerShellコードをコピー">コピー</button></div><p id="attendance-pad-confirmed-status" class="status" role="status"></p><pre class="prompt powershell" id="attendance-pad-confirmed">&amp; (Join-Path $env:LOCALAPPDATA 'LysitheaAutoStart\AutoStart.ps1') -Mode Confirmed -Ticket '%Ticket%'</pre>
+<div class="bar"><strong><code>Failed</code></strong><button type="button" data-copy="attendance-pad-failed" data-copy-to="PADのPowerShellアクション" aria-label="Failed のPowerShellコードをコピー">コピー</button></div><p id="attendance-pad-failed-status" class="status" role="status"></p><pre class="prompt powershell" id="attendance-pad-failed">&amp; (Join-Path $env:LOCALAPPDATA 'LysitheaAutoStart\AutoStart.ps1') -Mode Failed -Ticket '%Ticket%'</pre>
+</details>
+
+<div class="bar"><h4>ログオン連携の設定</h4><button type="button" data-copy="attendance-auto-install" data-copy-to="Windows PowerShell" aria-label="自動出勤の設定用PowerShellコードをコピー">設定コードをコピー</button></div>
+<p id="attendance-auto-install-status" class="status" role="status"></p>
+<p>祝日対応済みの <code>Attendance.ps1</code> と <code>off-days.txt</code> を用意し、通常権限の Windows PowerShell に設定コードを貼り付けます。PADのプロパティに表示される実行URLと、最初のログオンが勤務開始と一致する時間帯を端末内で入力します。従来の手動出勤支援タスクが有効なら、対象を確認して社内で許可された手順で無効にします。</p>
+<p>最初は <code>TEST</code> を指定し、実際のログオンで確認します。出勤ボタンなしで履歴あり・なし、未認証、エラーを検証します。当日の模擬結果は <code>%LOCALAPPDATA%LysitheaAutoStartyyyy-MM-dd.json</code> の <code>Status</code> が <code>Simulated</code>、<code>Existing</code> または <code>Failed</code> になることを確認します。本番移行の承認後、別の実際の勤務開始日に <code>LIVE</code> で確認し、公式履歴に反映されたことを確認します。無送信テストと本番は別日に行います。</p>
+<details><summary>設定コードを確認</summary><pre class="prompt powershell" id="attendance-auto-install">&amp; {
+    $ErrorActionPreference = 'Stop'
+    $folder = Join-Path $env:LOCALAPPDATA 'LysitheaAutoStart'
+    $path = Join-Path $folder 'AutoStart.ps1'
+    $source = @'
+param(
+    [ValidateSet('Setup','Logon','Begin','Reserve','Existing','Confirmed','Failed','Library')]
+    [string]$Mode = 'Setup',
+    [string]$Ticket
+)
+$ErrorActionPreference = 'Stop'
+$autoFolder = Join-Path $env:LOCALAPPDATA 'LysitheaAutoStart'
+$configFile = Join-Path $autoFolder 'config.json'
+
+function Write-State($path,$value) {
+    $temp = "$path.tmp"
+    [IO.File]::WriteAllText($temp,($value | ConvertTo-Json -Compress))
+    if ([IO.File]::Exists($path)) {
+        [IO.File]::Replace($temp,$path,[System.Management.Automation.Language.NullString]::Value)
+    } else { [IO.File]::Move($temp,$path) }
+}
+function Get-Workday($now,$attendanceFile) {
+    if ($now.DayOfWeek -in 'Saturday','Sunday') { return 'Off' }
+    $profileFolder = Join-Path $env:LOCALAPPDATA 'LysitheaAttendanceHelper'
+    $date = $now.ToString('yyyy-MM-dd',[cultureinfo]::InvariantCulture)
+    $excluded = @(Get-Content -LiteralPath (Join-Path $profileFolder 'off-days.txt') -Encoding UTF8 |
+        ForEach-Object { $_.Trim() } | Where-Object { $_ })
+    foreach ($entry in $excluded) {
+        [void][datetime]::ParseExact($entry,'yyyy-MM-dd',[cultureinfo]::InvariantCulture)
+    }
+    if ($excluded -contains $date) { return 'Off' }
+    if (Test-Path -LiteralPath (Join-Path $profileFolder "$date-Start.txt")) { return 'Review' }
+    $source = [IO.File]::ReadAllText($attendanceFile).Replace([string][char]13,'')
+    $block = [regex]::Matches($source,'(?ms)^    # BEGIN JAPAN HOLIDAY DATA\n.*?^    # END JAPAN HOLIDAY DATA$')
+    if ($block.Count -ne 1) { return 'CalendarMissing' }
+    $year = [regex]::Matches($block[0].Value,"(?m)^\s+$($now.Year) = '([0-9]{4}(?: [0-9]{4})*)'$")
+    if ($year.Count -ne 1) { return 'CalendarMissing' }
+    $dates = $year[0].Groups[1].Value -split ' '
+    foreach ($entry in $dates) {
+        [void][datetime]::ParseExact(('{0}{1}' -f $now.Year,$entry),'yyyyMMdd',[cultureinfo]::InvariantCulture)
+    }
+    if ($dates -contains $now.ToString('MMdd',[cultureinfo]::InvariantCulture)) { return 'Off' }
+    'Work'
+}
+function Invoke-State($operation,$ticket,$now,$folder,$settings) {
+    $date = $now.ToString('yyyy-MM-dd',[cultureinfo]::InvariantCulture)
+    $file = Join-Path $folder "$date.json"
+    $state = if ([IO.File]::Exists($file)) { Get-Content -Raw -Encoding UTF8 -LiteralPath $file | ConvertFrom-Json }
+    if ($operation -eq 'Logon') {
+        if ($state) { return 'STOP' }
+        $start = [timespan]::ParseExact($settings.WindowStart,'hh\:mm',[cultureinfo]::InvariantCulture)
+        $end = [timespan]::ParseExact($settings.WindowEnd,'hh\:mm',[cultureinfo]::InvariantCulture)
+        $deadline = $now.AddSeconds(90)
+        $windowEnd = $now.Date.Add($end)
+        if ($deadline -gt $windowEnd) { $deadline = $windowEnd }
+        $state = @{ Status='Skipped'; Ticket=[guid]::NewGuid().ToString('N'); Expires=$deadline.Ticks }
+        # The first invocation consumes the day even when it cannot start a flow.
+        Write-State $file $state
+        $workday = Get-Workday $now $settings.AttendanceFile
+        if ($workday -ne 'Work') { return $workday }
+        if ($now.TimeOfDay -lt $start -or $now.TimeOfDay -ge $end) { return 'OutsideWindow' }
+        $state.Status = 'Waiting'
+        Write-State $file $state
+        return $state.Ticket
+    }
+    if (!$state) { return 'STOP' }
+    if ($operation -eq 'Begin' -and $state.Status -eq 'Waiting' -and $now.Ticks -lt $state.Expires) {
+        $state.Status = 'Checking'
+        Write-State $file $state
+        return "READY|$($state.Ticket)|$date"
+    }
+    if (!$ticket -or $ticket -cne $state.Ticket) { return 'STOP' }
+    switch ($operation) {
+        'Reserve' {
+            if ($state.Status -ne 'Checking' -or $now.Ticks -ge $state.Expires -or
+                (Get-Workday $now $settings.AttendanceFile) -ne 'Work') { return 'STOP' }
+            $state.Status = if ($settings.Live -eq $true) { 'Reserved' } else { 'Simulated' }
+            Write-State $file $state
+            if ($state.Status -eq 'Reserved') { return 'SEND' }
+            return 'SIMULATED'
+        }
+        'Existing' { if ($state.Status -eq 'Checking') { $state.Status = 'Existing' } }
+        'Confirmed' { if ($state.Status -eq 'Reserved') { $state.Status = 'Confirmed' } }
+        'Failed' {
+            if ($state.Status -eq 'Reserved') { $state.Status = 'Unknown' }
+            elseif ($state.Status -in 'Waiting','Checking') { $state.Status = 'Failed' }
+        }
+        'Status' { return $state.Status }
+    }
+    Write-State $file $state
+    $state.Status
+}
+function Invoke-Locked($operation,$ticket,$settings,$sid) {
+    $mutex = [Threading.Mutex]::new($false,"Global\LysitheaAutoStart-$sid")
+    $entered = $false
+    try {
+        try { $entered = $mutex.WaitOne(3000) } catch [Threading.AbandonedMutexException] { $entered = $true }
+        if (!$entered) { throw '出勤支援の待機時間を超えました。' }
+        Invoke-State $operation $ticket (Get-Date) $autoFolder $settings
+    } finally {
+        if ($entered) { $mutex.ReleaseMutex() }
+        $mutex.Dispose()
+    }
+}
+function Notify($message) {
+    Add-Type -AssemblyName System.Windows.Forms
+    [void][System.Windows.Forms.MessageBox]::Show($message,'リシテア出勤支援')
+}
+function Setup-AutoStart($sid,$taskName) {
+    $existing = @(Get-ScheduledTask | Where-Object { $_.TaskPath -eq '\' -and
+        $_.TaskName -in $taskName,"LysitheaAttendance-$sid-Start" })
+    if ($existing | Where-Object { $_.TaskName -ne $taskName -and $_.State -ne 'Disabled' }) {
+        throw '以前の出勤支援タスクが有効です。タスク スケジューラで対象を確認し、承認済みの手順で無効にしてから再実行してください。'
+    }
+    $description = "LysitheaAutoStart | $PSCommandPath"
+    if ($existing | Where-Object { $_.TaskName -eq $taskName -and $_.Description -ne $description }) {
+        throw '同名の別タスクがあるため中止しました。'
+    }
+    $source = (Read-Host '祝日対応済みの Attendance.ps1 のフルパス').Trim().Trim('"')
+    $file = Get-Item -LiteralPath $source
+    if ($file.PSIsContainer -or $file.Name -ne 'Attendance.ps1' -or
+        !([IO.File]::ReadAllText($file.FullName).Contains('# BEGIN JAPAN HOLIDAY DATA'))) {
+        throw '祝日対応済みの Attendance.ps1 を指定してください。'
+    }
+    $flow = Read-Host '承認済みPADフローの実行URL（フローID・環境ID付き）'
+    if ($flow -notmatch '^ms-powerautomate:/console/flow/run\?environmentId=[a-z0-9-]+&amp;workflowId=[a-f0-9-]{36}$' -and
+        $flow -notmatch '^ms-powerautomate:/console/flow/run\?workflowId=[a-f0-9-]{36}&amp;environmentId=[a-z0-9-]+$') {
+        throw 'PADのプロパティにある、環境IDとフローIDだけの実行URLを入力してください。'
+    }
+    $start = Read-Host '最初のPCログオンが実際の勤務開始と一致する時間帯の開始（HH:mm）'
+    $end = Read-Host '同じ時間帯の終了（HH:mm）'
+    $culture = [cultureinfo]::InvariantCulture
+    if ($start -notmatch '^(?:[01]\d|2[0-3]):[0-5]\d$' -or $end -notmatch '^(?:[01]\d|2[0-3]):[0-5]\d$' -or
+        [timespan]::ParseExact($start,'hh\:mm',$culture) -ge [timespan]::ParseExact($end,'hh\:mm',$culture)) {
+        throw '同一日内の開始・終了を入力してください。'
+    }
+    Write-Host "本人ログオン時の出勤専用タスクを登録します。対象時間帯 ${start}〜$end。出勤専用PADフローを起動します。"
+    $choice = Read-Host '模擬運用は TEST。社内許可、無送信実機テスト、勤務開始時だけログオンする運用を確認済みなら LIVE。Enterで中止'
+    if ($choice -cnotin 'TEST','LIVE') { return }
+    Write-State $configFile @{ AttendanceFile=$file.FullName; Flow=$flow; WindowStart=$start; WindowEnd=$end; Live=($choice -ceq 'LIVE') }
+    $user = [Security.Principal.WindowsIdentity]::GetCurrent().Name
+    $exe = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+    $action = New-ScheduledTaskAction -Execute $exe -Argument ('-NoProfile -WindowStyle Hidden -File "{0}" -Mode Logon' -f $PSCommandPath)
+    $trigger = New-ScheduledTaskTrigger -AtLogOn -User $user
+    $principal = New-ScheduledTaskPrincipal -UserId $user -LogonType Interactive -RunLevel Limited
+    $options = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
+        -MultipleInstances IgnoreNew -DisallowDemandStart
+    [void](Register-ScheduledTask -TaskName $taskName -Description $description -Action $action -Trigger $trigger -Principal $principal -Settings $options -Force)
+    Write-Host "出勤タスクを登録しました: $taskName ($choice)"
+}
+
+if ($Mode -eq 'Library') { return }
+$sid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+$taskName = "LysitheaAutoStart-$sid"
+if ($Mode -eq 'Setup') {
+    [void][IO.Directory]::CreateDirectory($autoFolder)
+    Setup-AutoStart $sid $taskName
+    return
+}
+
+try {
+    $settings = Get-Content -Raw -Encoding UTF8 -LiteralPath $configFile | ConvertFrom-Json
+    if ($Mode -ne 'Logon') { Invoke-Locked $Mode $Ticket $settings $sid; return }
+    $claim = Invoke-Locked 'Logon' '' $settings $sid
+    if ($claim -in 'Off','STOP') { return }
+    if ($claim -notmatch '^[a-f0-9]{32}$') {
+        Notify '本日の自動出勤を見送りました。勤務時間帯・祝日データ・出勤履歴を確認し、必要時に公式画面で打刻してください。'
+        return
+    }
+    Start-Process -FilePath $settings.Flow
+    # Allow a separate period to verify the official history after the 90-second send window.
+    for ($i = 0; $i -lt 48; $i++) {
+        Start-Sleep -Seconds 3
+        $status = Invoke-Locked 'Status' $claim $settings $sid
+        if ($status -in 'Confirmed','Existing','Simulated') { return }
+        if ($status -in 'Unknown','Failed','STOP') { break }
+    }
+    [void](Invoke-Locked 'Failed' $claim $settings $sid)
+    Notify '自動出勤の完了を確認できません。公式の出勤履歴を先に確認してください。結果不明のまま打刻を繰り返さないでください。'
+} catch {
+    if ($Mode -eq 'Logon') {
+        Notify '出勤支援を続行できません。公式履歴と端末の設定を確認してください。'
+    } else { 'STOP' }
+    exit 1
+}
+'@
+    [void][IO.Directory]::CreateDirectory($folder)
+    try {
+        $file = [IO.File]::Open($path,[IO.FileMode]::CreateNew)
+        try {
+            $writer = [IO.StreamWriter]::new($file,[Text.UTF8Encoding]::new($true))
+            try { $writer.WriteLine($source) } finally { $writer.Dispose() }
+        } finally { $file.Dispose() }
+    } catch [IO.IOException] {
+        if (!(Test-Path -LiteralPath $path -PathType Leaf) -or
+            [IO.File]::ReadAllText($path).Replace([string][char]13,'').TrimEnd() -cne $source.Replace([string][char]13,'').TrimEnd()) {
+            throw '既存の出勤スクリプトを確認してください。自動置換は行いません。'
+        }
+    }
+    &amp; $path -Mode Setup
 }
 </pre></details>
 </div>
