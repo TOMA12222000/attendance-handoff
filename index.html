@@ -5,7 +5,7 @@
 nav{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}nav a{color:#086e66;background:#e4f0ed;border-radius:8px;padding:8px 14px;text-decoration:none;font-weight:700}nav a:hover{text-decoration:underline}section{scroll-margin-top:20px}.note{color:#50606a;font-size:.9rem}.prompt{line-height:1.9}a:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}
 summary{cursor:pointer;color:#086e66;font-weight:700;padding:12px 0}summary:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}.guide{border-top:1px solid #e4eceb;margin-top:12px;padding-top:12px;overflow-wrap:anywhere}.guide h2,.guide h3,.guide h4{line-height:1.5;margin-top:28px}.guide ul{padding-left:24px}.table-wrap{max-width:100%;overflow-x:auto;margin:16px 0}.guide table{border-collapse:collapse;width:100%;font-size:.85rem;line-height:1.6;min-width:560px}.guide th,.guide td{padding:10px;border:1px solid #dce7e5;text-align:left;vertical-align:top}.guide th{background:#edf5f3}.guide code{font-size:.9em;background:#edf5f3;padding:2px 4px;border-radius:4px}.skill-field{margin-top:26px}.skill-field h3{font-size:1rem;margin:0}.skill-field small{font-weight:400;color:#50606a}.skill-field .prompt{padding-top:14px}.prompt.powershell{font-family:Consolas,monospace;font-size:.9rem;background:#f4f7f7;padding:16px;border-radius:8px}
 </style></head><body><main>
-<header><div class="eyebrow">HANDOFF NOTE</div><h1>Copilot用指示文・<br>勤怠自動化の共有ページ</h1><p>用途に合う指示文やコードをコピーし、Copilot、Agent Builder、またはWindows PowerShellに貼り付けてください。</p><nav aria-label="指示文を選ぶ"><a href="#excel-agent">Excel品質アシスタント</a><a href="#powerpoint-agent">PowerPoint品質アシスタント</a><a href="#onedrive">OneDriveファイル数</a><a href="#onedrive-classification">OneDriveの分類候補</a><a href="#onedrive-daily">OneDriveの日次実行</a><a href="#copilot">Copilotカスタム指示</a><a href="#excel">Excel個人設定</a><a href="#powerpoint">PowerPoint Skill</a><a href="#rule-guide">ルール設計・導入ガイド</a><a href="#attendance">勤怠打刻自動化</a></nav></header>
+<header><div class="eyebrow">HANDOFF NOTE</div><h1>Copilot用指示文・<br>勤怠自動化の共有ページ</h1><p>用途に合う指示文やコードをコピーし、Copilot、Agent Builder、またはWindows PowerShellに貼り付けてください。</p><nav aria-label="指示文を選ぶ"><a href="#excel-agent">Excel品質アシスタント</a><a href="#powerpoint-agent">PowerPoint品質アシスタント</a><a href="#onedrive">OneDriveファイル数</a><a href="#onedrive-classification">OneDriveの分類候補</a><a href="#onedrive-daily">OneDriveの日次実行</a><a href="#copilot">Copilotカスタム指示</a><a href="#excel">Excel個人設定</a><a href="#powerpoint">PowerPoint Skill</a><a href="#rule-guide">ルール設計・導入ガイド</a><a href="#attendance">勤怠打刻自動化</a><a href="#attendance-powershell-test">リシテア模擬テスト</a></nav></header>
 <section id="copilot" aria-labelledby="copilot-heading"><div class="bar"><h2 id="copilot-heading">Microsoft 365 Copilot共通カスタム指示｜統合版</h2><button type="button" data-copy="copilot-prompt" aria-label="Copilotカスタム指示の全文をコピー">全文をコピー</button></div><p class="note">既存8項目にExcel・PowerPointの共通ルールを追記した統合版です。「全文をコピー」で、現在の共通カスタム指示をこの全文に置き換えてください。追加分を別途貼り付ける必要はありません。</p><div id="copilot-prompt-status" class="status" role="status" aria-live="polite"></div><div id="copilot-prompt" class="prompt">あなたは、私の戦略コンサルティング業務における生産性、思考・分析品質、成果物の完成度、意思決定の質を最大化するアシスタントである。
 
 1. 基本方針
@@ -991,6 +991,239 @@ try {
 }</pre>
   </details>
 </div>
+</section><section id="attendance-powershell-test">
+<div class="bar"><h2>リシテア勤怠支援の模擬テスト</h2><button type="button" data-copy="attendance-test-code" data-copy-to="Windows PowerShell">PowerShellコードをコピー</button></div>
+<p id="attendance-test-code-status" class="status" role="status"></p>
+<ol>
+<li>社内で許可された環境で、通常権限の Windows PowerShell を開きます。</li>
+<li>上のボタンでコードをコピーし、PowerShell に貼り付けて実行します。貼り付け確認が出たら内容を確認します。</li>
+<li><code>PASS</code> が16件表示されることを確認します。</li>
+</ol>
+<p>このコードはローカルに4ファイルを保存し、模擬テストを実行します。今回はタスク登録と本番打刻は保留です。表示された保存先は次回の設定で使います。</p>
+<details><summary>貼り付けるコードを確認</summary><pre class="prompt powershell" id="attendance-test-code">&amp; {
+    $ErrorActionPreference = 'Stop'
+    $folder = Join-Path $env:LOCALAPPDATA ('LysitheaHelper-' + [guid]::NewGuid().ToString('N').Substring(0,8))
+    $encoding = [Text.UTF8Encoding]::new($true)
+    [void](New-Item -ItemType Directory -Path $folder)
+    $source = @'
+param(
+    [ValidateSet('Setup','Start','Finish','Remove','Library')]
+    [string]$Mode = 'Start',
+    [ValidatePattern('^([01][0-9]|2[0-3]):[0-5][0-9]$')]
+    [string]$EndTime = '17:30',
+    [switch]$NativeStart,
+    [switch]$DirectPunchPage,
+    [switch]$Manual
+)
+$ErrorActionPreference = 'Stop'
+$root = Join-Path $env:LOCALAPPDATA 'LysitheaAttendanceHelper'
+$config = Join-Path $root 'settings.json'
+$scriptPath = $PSCommandPath
+
+function Ask($message) {
+    # Yes / No, with No as the default. Only an explicit Yes proceeds.
+    ([System.Windows.Forms.MessageBox]::Show($message,'リシテア勤怠','YesNo','Question','Button2') -eq 'Yes')
+}
+function Tell($message) {
+    [void][System.Windows.Forms.MessageBox]::Show($message,'リシテア勤怠')
+}
+function Read-Portal($url) {
+    $uri = [uri]$url
+    if (!$uri.IsAbsoluteUri -or $uri.Scheme -ne 'https' -or !$uri.Host -or
+        $uri.UserInfo -or $uri.Query -or $uri.Fragment) { throw 'URL' }
+    $uri.AbsoluteUri
+}
+function Open-Portal($url) { Start-Process -FilePath (Read-Portal $url) }
+function Online { [Net.NetworkInformation.NetworkInterface]::GetIsNetworkAvailable() }
+function Today { (Get-Date).Date }
+function Record($file,$value) {
+    $temp = "$file.tmp"
+    [IO.File]::WriteAllText($temp,$value)
+    if ([IO.File]::Exists($file)) { [IO.File]::Replace($temp,$file,[System.Management.Automation.Language.NullString]::Value) }
+    else { [IO.File]::Move($temp,$file) }
+}
+function Run-Reminder($kind,$day,$folder,$settings,[switch]$Manual) {
+    $date = $day.ToString('yyyy-MM-dd')
+    if ($day.DayOfWeek -in 'Saturday','Sunday') { return }
+    $offDays = @(Get-Content -LiteralPath (Join-Path $folder 'off-days.txt') -Encoding UTF8 |
+        ForEach-Object { $_.Trim() } | Where-Object { $_ })
+    foreach ($entry in $offDays) {
+        [void][datetime]::ParseExact($entry,'yyyy-MM-dd',[cultureinfo]::InvariantCulture)
+    }
+    if ($offDays -contains $date) { return }
+    $marker = Join-Path $folder "$date-$kind.txt"
+    $endMarker = Join-Path $folder "$date-Finish.txt"
+    if ($kind -eq 'Start' -and (Test-Path -LiteralPath $endMarker) -and
+        [IO.File]::ReadAllText($endMarker) -eq 'Confirmed') { return }
+    $state = if (Test-Path -LiteralPath $marker) { [IO.File]::ReadAllText($marker) }
+    if ($state -eq 'Confirmed') { return }
+    if ($state -and $state -ne 'CheckHistory') { throw 'State' }
+    $label = if ($kind -eq 'Start') { '出勤' } else { '退勤' }
+    $question = if ($kind -eq 'Start') {
+        '今日は勤務日で、今から実際に勤務を開始しますか？'
+    } else { '今日は勤務日で、実際に勤務を終了しましたか？ 勤務を続ける場合は「いいえ」で保留します。' }
+    if ($state -eq 'CheckHistory') {
+        $question = "前回の${label}結果は未確認です。公式履歴を確認しますか？"
+    }
+    if ((!$Manual -or $state -eq 'CheckHistory') -and !(Ask $question)) { return }
+    if ((Today) -ne $day) { return }
+    if (!(Online)) { Tell 'ネットワーク未接続です。接続後に同じ操作を再開してください。'; return }
+    $url = if ($settings.PunchPage -and !$state) { $settings.PunchPage } else { $settings.Portal }
+    Record $marker 'CheckHistory'
+    Open-Portal $url
+    $verified = Ask "公式画面で対象日・勤務予定・履歴を確認してください。未登録で実際の${label}時に限り、公式画面で1回打刻してください。SSO・通信エラー時は履歴を再確認してください。`n`n$date の${label}時刻が公式履歴に表示されていますか？"
+    if ($verified -and (Today) -eq $day) { Record $marker 'Confirmed' }
+    else { Tell '結果は未確認です。次回は公式履歴から確認してください。' }
+}
+if ($Mode -eq 'Library') { return }
+try {
+    Add-Type -AssemblyName System.Windows.Forms
+    $sid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+    $prefix = "LysitheaAttendance-$sid"
+    $description = "LysitheaAttendanceHelper v1 | $scriptPath"
+    $exe = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+    if ($Mode -in 'Setup','Remove') {
+        $existing = @(Get-ScheduledTask -ErrorAction Stop | Where-Object {
+            $_.TaskPath -eq '\' -and $_.TaskName -in "$prefix-Start","$prefix-Finish"
+        })
+        foreach ($task in $existing) {
+            if ($task.Description -ne $description) { throw 'Task name conflict' }
+        }
+        if ($Mode -eq 'Remove') {
+            foreach ($task in $existing) { $task | Unregister-ScheduledTask -Confirm:$false }
+            return
+        }
+        $portal = Read-Portal (Read-Host 'EY端末内で、閲覧用の公式トップURLを入力（HTTPS、クエリなし）')
+        $settings = @{Portal=$portal}
+        if ($DirectPunchPage) {
+            $settings.PunchPage = Read-Portal (Read-Host '表示だけで打刻されない、承認済みの公式打刻画面URLを入力')
+        }
+        [void][IO.Directory]::CreateDirectory($root)
+        Record $config ($settings | ConvertTo-Json -Compress)
+        $off = Join-Path $root 'off-days.txt'
+        if (!(Test-Path -LiteralPath $off)) { [IO.File]::WriteAllText($off,'') }
+        $user = [Security.Principal.WindowsIdentity]::GetCurrent().Name
+        $principal = New-ScheduledTaskPrincipal -UserId $user -LogonType Interactive -RunLevel Limited
+        $options = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -MultipleInstances IgnoreNew
+        foreach ($kind in 'Finish','Start') {
+            $name = "$prefix-$kind"
+            if ($kind -eq 'Start' -and $NativeStart) {
+                if ($existing.TaskName -contains $name) { Unregister-ScheduledTask -TaskName $name -Confirm:$false }
+                continue
+            }
+            $trigger = if ($kind -eq 'Start') { New-ScheduledTaskTrigger -AtLogOn -User $user }
+            else { New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At $EndTime }
+            $arguments = '-NoProfile -STA -WindowStyle Hidden -File "{0}" -Mode {1}' -f $scriptPath,$kind
+            $action = New-ScheduledTaskAction -Execute $exe -Argument $arguments
+            [void](Register-ScheduledTask -TaskName $name -Trigger $trigger -Action $action -Principal $principal -Settings $options -Description $description -Force)
+        }
+        Write-Output "登録完了。退勤通知 $EndTime / 休日ファイル $off"
+        return
+    }
+    $mutex = [Threading.Mutex]::new($false,"Local\LysitheaAttendance-$sid-$Mode")
+    try {
+        try { $entered = $mutex.WaitOne(0) } catch [Threading.AbandonedMutexException] { $entered = $true }
+        if ($entered) {
+            $settings = Get-Content -Raw -Encoding UTF8 -LiteralPath $config | ConvertFrom-Json
+            Run-Reminder $Mode (Today) $root $settings -Manual:$Manual
+        }
+    } finally {
+        if ($entered) { $mutex.ReleaseMutex() }
+        $mutex.Dispose()
+    }
+} catch {
+    if ($Mode -in 'Setup','Remove') { throw }
+    Tell '勤怠支援の処理を完了できませんでした。公式履歴を確認し、接続・設定を確認後に再開してください。'
+    exit 1
+}
+'@
+    [IO.File]::WriteAllText((Join-Path $folder 'Attendance.ps1'),$source + [Environment]::NewLine,$encoding)
+    $source = @'
+$ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'Attendance.ps1') -Mode Library
+$folder = Join-Path ([IO.Path]::GetTempPath()) ('attendance-test-' + [guid]::NewGuid())
+[void][IO.Directory]::CreateDirectory($folder)
+$off = Join-Path $folder 'off-days.txt'
+$day = [datetime]'2026-11-16'
+$settings = @{ Portal='https://example.invalid/' }
+$messages = @()
+$opens = 0
+$lastUrl = $null
+function Today { $day }
+function Open-Portal($url) { $script:opens++; $script:lastUrl = $url }
+function Online { $connected }
+function Ask($message) { $responses.Dequeue() }
+function Tell($message) { $script:messages += $message }
+function Check($ok,$name) { if (!$ok) { throw $name }; "PASS $name" }
+function Run($kind,$answers,[switch]$Manual) {
+    $responses = [Collections.Queue]::new()
+    foreach ($answer in $answers) { $responses.Enqueue($answer) }
+    Run-Reminder $kind $day $folder $settings -Manual:$Manual
+}
+try {
+    [IO.File]::WriteAllText($off,'2026-11-16')
+    Run Start @()
+    Check ($opens -eq 0) 'excluded workday'
+    [IO.File]::WriteAllText($off,'')
+    $day = $day.AddDays(-1)
+    Run Start @()
+    Check ($opens -eq 0) 'weekend'
+    $day = $day.AddDays(1)
+    Run Start @($false)
+    Check ($opens -eq 0) 'logon before actual work'
+    $connected = $false
+    Run Start @($true)
+    Check ($opens -eq 0 -and $messages.Count -eq 1) 'offline notification'
+    $connected = $true
+    Run Start @($true,$false)
+    $marker = Join-Path $folder '2026-11-16-Start.txt'
+    Check ($opens -eq 1 -and (Get-Content $marker) -eq 'CheckHistory' -and $messages.Count -eq 2) 'weekday launch and SSO/result unconfirmed'
+    Run Start @($true,$true)
+    Check ($opens -eq 2 -and (Get-Content $marker) -eq 'Confirmed') 'history verified after recovery'
+    Run Start @()
+    Check ($opens -eq 2) 'repeat logon suppressed'
+    Run Finish @($false)
+    Check ($opens -eq 2) 'end reminder deferred'
+    Run Finish @($true,$true)
+    Run Finish @()
+    Check ($opens -eq 3 -and (Get-Content (Join-Path $folder '2026-11-16-Finish.txt')) -eq 'Confirmed') 'manual finish and duplicate suppression'
+    $day = $day.AddDays(1)
+    $settings.PunchPage = 'https://example.invalid/clock'
+    Run Finish @($false)
+    Check ($opens -eq 3) 'scheduled finish still requires confirmation'
+    Run Finish @($false) -Manual
+    Check ($opens -eq 4 -and $lastUrl -eq $settings.PunchPage) 'manual finish opens direct page with no initial prompt'
+    Run Finish @($false) -Manual
+    Check ($opens -eq 4) 'uncertain finish still requires history confirmation'
+    Run Start @($true,$true)
+    Check ($opens -eq 5 -and $lastUrl -eq $settings.PunchPage) 'unconfirmed finish does not suppress start'
+    Run Finish @($true,$true) -Manual
+    Check ($opens -eq 6 -and $lastUrl -eq $settings.Portal) 'uncertain result reopens official portal'
+    Run Finish @() -Manual
+    Check ($opens -eq 6) 'confirmed finish suppresses manual launch'
+    $bad = $false
+    try { Read-Portal 'http://example.invalid/' } catch { $bad = $true }
+    Check $bad 'invalid URL rejected'
+} finally {
+    foreach ($file in [IO.Directory]::GetFiles($folder)) { [IO.File]::Delete($file) }
+    [IO.Directory]::Delete($folder)
+}
+'@
+    [IO.File]::WriteAllText((Join-Path $folder 'Test-Attendance.ps1'),$source + [Environment]::NewLine,$encoding)
+    $source = @'
+@echo off
+"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -STA -File "%~dp0Attendance.ps1" -Mode Start
+'@
+    [IO.File]::WriteAllText((Join-Path $folder 'Start.cmd'),$source + [Environment]::NewLine,[Text.Encoding]::ASCII)
+    $source = @'
+@echo off
+"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -STA -File "%~dp0Attendance.ps1" -Mode Finish -Manual
+'@
+    [IO.File]::WriteAllText((Join-Path $folder 'Finish.cmd'),$source + [Environment]::NewLine,[Text.Encoding]::ASCII)
+    Write-Host ("保存先: " + $folder)
+    &amp; (Join-Path $folder 'Test-Attendance.ps1')
+}
+</pre></details>
 </section><footer>公開用の一般的な指示文・要件のみを掲載しています。</footer></main><script>
 document.querySelectorAll('[data-copy]').forEach(button=>button.addEventListener('click',async()=>{
   const target=document.getElementById(button.dataset.copy);
