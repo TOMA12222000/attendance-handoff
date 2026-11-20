@@ -1224,6 +1224,79 @@ try {
     &amp; (Join-Path $folder 'Test-Attendance.ps1')
 }
 </pre></details>
+<div id="attendance-powershell-setup" class="skill-field">
+<div class="bar"><h3>自動実行の設定</h3><button type="button" data-copy="attendance-setup-code" data-copy-to="Windows PowerShell" aria-label="自動実行設定のPowerShellコードをコピー">PowerShellコードをコピー</button></div>
+<p id="attendance-setup-code-status" class="status" role="status"></p>
+<p>模擬テスト16件の合格、ログオン連携による正式な出勤登録、社内のタスク登録許可を確認してから進めてください。</p>
+<ol>
+<li>設定用のコードをコピーし、通常権限の Windows PowerShell に1回貼り付けます。候補が複数なら、模擬テストで表示された保存先と一致する番号を選びます。</li>
+<li>対象ファイルと設定内容を確認して <code>REGISTER</code> と入力します。続けて、表示だけで打刻されない会社指定の公式入口URL（HTTPS、クエリ・フラグメントなし）をEY端末内で入力します。</li>
+<li>表示された休日ファイルに平日の休日・全日休暇を <code>yyyy-MM-dd</code> 形式で1行に1日ずつ保存します。タスク スケジューラのライブラリで、本人の <code>LysitheaAttendance-…-Finish</code> が月〜金17:30で、次回の実行時刻が表示されることを確認します。</li>
+</ol>
+<p>定刻に勤務を続けている場合は「いいえ」で保留し、実際に終業したら同じ保存先の <code>Finish.cmd</code> を開きます。</p>
+<details><summary>設定コードを確認</summary><pre class="prompt powershell" id="attendance-setup-code">&amp; {
+    $ErrorActionPreference = 'Stop'
+    $candidates = @(Get-ChildItem -LiteralPath $env:LOCALAPPDATA -Directory -Filter 'LysitheaHelper-*' |
+        ForEach-Object { Get-Item -LiteralPath (Join-Path $_.FullName 'Attendance.ps1') -ErrorAction SilentlyContinue } |
+        Where-Object { -not $_.PSIsContainer } | Sort-Object FullName)
+
+    if ($candidates.Count -eq 1) {
+        $path = $candidates[0].FullName
+    } elseif ($candidates.Count -gt 1) {
+        Write-Host '複数の候補があります。模擬テスト時に表示された保存先と照合してください。'
+        for ($i = 0; $i -lt $candidates.Count; $i++) {
+            Write-Host ('[{0}] {1}' -f ($i + 1),$candidates[$i].FullName)
+        }
+        $answer = Read-Host '一致する番号を入力してください（Enterで中止）'
+        $number = 0
+        if (![int]::TryParse($answer,[ref]$number) -or $number -lt 1 -or $number -gt $candidates.Count) {
+            Write-Host '候補が選択されなかったため中止しました。'
+            return
+        }
+        $path = $candidates[$number - 1].FullName
+    } else {
+        Write-Host '自動検出できませんでした。模擬テスト時に表示された保存先を確認してください。'
+        $answer = Read-Host 'Attendance.ps1 のフルパスを入力してください（Enterで中止）'
+        if ([string]::IsNullOrWhiteSpace($answer)) { return }
+        $path = $answer.Trim().Trim('"')
+    }
+
+    $file = Get-Item -LiteralPath $path
+    if ($file.PSIsContainer -or $file.Name -ne 'Attendance.ps1') {
+        throw '模擬テスト済みの Attendance.ps1 を指定してください。'
+    }
+
+    Write-Host ('対象ファイル: ' + $file.FullName)
+    Write-Host '出勤: 会社の正式なログオン連携を使用（NativeStart）。既存の出勤支援タスクがあれば解除します。'
+    Write-Host '退勤: 本人がログオンしている平日の17:30に通知。勤務継続時は保留できます。'
+    Write-Host '会社が認めた閲覧用の公式入口URLを、この端末内の次の入力欄で設定します。'
+    $consent = Read-Host '正式な出勤登録を確認済みで、社内でタスク登録が許可されている場合のみ REGISTER と入力'
+    if ($consent -cne 'REGISTER') {
+        Write-Host '中止しました。'
+        return
+    }
+
+    &amp; $file.FullName -Mode Setup -NativeStart -EndTime '17:30'
+
+    $sid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+    $prefix = 'LysitheaAttendance-' + $sid
+    $tasks = @(Get-ScheduledTask | Where-Object {
+        $_.TaskPath -eq '\' -and $_.TaskName -in "$prefix-Start","$prefix-Finish"
+    })
+    $description = 'LysitheaAttendanceHelper v1 | ' + $file.FullName
+    if ($tasks.Count -ne 1 -or $tasks[0].TaskName -ne "$prefix-Finish" -or
+        $tasks[0].Description -ne $description -or $tasks[0].State -eq 'Disabled') {
+        throw '退勤通知タスクの状態を確認できません。タスク スケジューラで登録内容を確認してください。'
+    }
+    $tasks | Select-Object TaskName,State
+    $info = Get-ScheduledTaskInfo -TaskName "$prefix-Finish" -TaskPath '\'
+    Write-Host ('次回の実行時刻: ' + $info.NextRunTime)
+    $offDays = Join-Path $env:LOCALAPPDATA 'LysitheaAttendanceHelper\off-days.txt'
+    Write-Host ('休日・全日休暇ファイル: ' + $offDays)
+    Write-Host '平日の休日・全日休暇を yyyy-MM-dd 形式で1行に1日ずつ保存してください。'
+}
+</pre></details>
+</div>
 </section><footer>公開用の一般的な指示文・要件のみを掲載しています。</footer></main><script>
 document.querySelectorAll('[data-copy]').forEach(button=>button.addEventListener('click',async()=>{
   const target=document.getElementById(button.dataset.copy);
