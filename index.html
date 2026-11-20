@@ -5,7 +5,7 @@
 nav{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}nav a{color:#086e66;background:#e4f0ed;border-radius:8px;padding:8px 14px;text-decoration:none;font-weight:700}nav a:hover{text-decoration:underline}section{scroll-margin-top:20px}.note{color:#50606a;font-size:.9rem}.prompt{line-height:1.9}a:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}
 summary{cursor:pointer;color:#086e66;font-weight:700;padding:12px 0}summary:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}.guide{border-top:1px solid #e4eceb;margin-top:12px;padding-top:12px;overflow-wrap:anywhere}.guide h2,.guide h3,.guide h4{line-height:1.5;margin-top:28px}.guide ul{padding-left:24px}.table-wrap{max-width:100%;overflow-x:auto;margin:16px 0}.guide table{border-collapse:collapse;width:100%;font-size:.85rem;line-height:1.6;min-width:560px}.guide th,.guide td{padding:10px;border:1px solid #dce7e5;text-align:left;vertical-align:top}.guide th{background:#edf5f3}.guide code{font-size:.9em;background:#edf5f3;padding:2px 4px;border-radius:4px}.skill-field{margin-top:26px}.skill-field h3{font-size:1rem;margin:0}.skill-field small{font-weight:400;color:#50606a}.skill-field .prompt{padding-top:14px}.prompt.powershell{font-family:Consolas,monospace;font-size:.9rem;background:#f4f7f7;padding:16px;border-radius:8px}
 </style></head><body><main>
-<header><div class="eyebrow">HANDOFF NOTE</div><h1>Copilot用指示文・<br>勤怠自動化の共有ページ</h1><p>用途に合う指示文やコードをコピーし、Copilot、Agent Builder、またはWindows PowerShellに貼り付けてください。</p><nav aria-label="指示文を選ぶ"><a href="#excel-agent">Excel品質アシスタント</a><a href="#powerpoint-agent">PowerPoint品質アシスタント</a><a href="#onedrive">OneDriveファイル数</a><a href="#onedrive-classification">OneDriveの分類候補</a><a href="#copilot">Copilotカスタム指示</a><a href="#excel">Excel個人設定</a><a href="#powerpoint">PowerPoint Skill</a><a href="#rule-guide">ルール設計・導入ガイド</a><a href="#attendance">勤怠打刻自動化</a></nav></header>
+<header><div class="eyebrow">HANDOFF NOTE</div><h1>Copilot用指示文・<br>勤怠自動化の共有ページ</h1><p>用途に合う指示文やコードをコピーし、Copilot、Agent Builder、またはWindows PowerShellに貼り付けてください。</p><nav aria-label="指示文を選ぶ"><a href="#excel-agent">Excel品質アシスタント</a><a href="#powerpoint-agent">PowerPoint品質アシスタント</a><a href="#onedrive">OneDriveファイル数</a><a href="#onedrive-classification">OneDriveの分類候補</a><a href="#onedrive-daily">OneDriveの日次実行</a><a href="#copilot">Copilotカスタム指示</a><a href="#excel">Excel個人設定</a><a href="#powerpoint">PowerPoint Skill</a><a href="#rule-guide">ルール設計・導入ガイド</a><a href="#attendance">勤怠打刻自動化</a></nav></header>
 <section id="copilot" aria-labelledby="copilot-heading"><div class="bar"><h2 id="copilot-heading">Microsoft 365 Copilot共通カスタム指示｜統合版</h2><button type="button" data-copy="copilot-prompt" aria-label="Copilotカスタム指示の全文をコピー">全文をコピー</button></div><p class="note">既存8項目にExcel・PowerPointの共通ルールを追記した統合版です。「全文をコピー」で、現在の共通カスタム指示をこの全文に置き換えてください。追加分を別途貼り付ける必要はありません。</p><div id="copilot-prompt-status" class="status" role="status" aria-live="polite"></div><div id="copilot-prompt" class="prompt">あなたは、私の戦略コンサルティング業務における生産性、思考・分析品質、成果物の完成度、意思決定の質を最大化するアシスタントである。
 
 1. 基本方針
@@ -640,11 +640,264 @@ $results | Format-Table -AutoSize</pre>
     }
 }</pre>
 </div>
+<div class="skill-field" id="onedrive-daily">
+  <div class="bar">
+    <h3>OneDriveの整理を1日1回実行</h3>
+    <button type="button" data-copy="onedrive-daily-code" data-copy-to="Windows PowerShell" aria-label="日次実行の設定コードをコピー">設定コードをコピー</button>
+  </div>
+  <ol>
+    <li>社用PCのWindows PowerShellに貼り付け、案件ルールと実行時刻を入力します。時刻の初期値は12:00です。PCが使える時間を指定してください。</li>
+    <li><code>AUTO</code> で1日1回自動移動、<code>REPORT</code> で1日1回候補を記録します。Enterだけで終了すると登録されません。</li>
+    <li>「登録済み」と次回実行時刻が表示されたことを確認してください。初回実行後の結果は <code>%LOCALAPPDATA%\OneDriveFileSort\latest.log</code> に記録されます。</li>
+  </ol>
+  <p>OneDrive直下と「ドキュメント」配下を確認します。自動移動は候補が一つのファイルが対象です。複数候補、同名、ショートカットは保留し、Teams・Copilot管理フォルダは除外します。タスクは社用PCにログオンしている間に動きます。勤務先の設定によってタスク登録やスクリプト実行が制限される場合があります。</p>
+  <p class="note">時刻・案件ルール・モードの変更はこの設定コードを再実行します。一時停止はタスク スケジューラで <code>OneDrive-FileSort-Daily</code> を無効にします。</p>
+  <div id="onedrive-daily-code-status" class="status" role="status"></div>
+  <details><summary>日次実行のPowerShellコードを表示</summary>
+    <pre id="onedrive-daily-code" class="prompt powershell">&amp; {
+    $ErrorActionPreference = 'Stop'
+    $root = $env:OneDriveCommercial
+    if ([string]::IsNullOrWhiteSpace($root) -or
+        -not (Test-Path -LiteralPath $root -PathType Container)) {
+        throw '業務用OneDriveの同期フォルダが見つかりません。'
+    }
+    $root = (Get-Item -LiteralPath $root).FullName
+    $taskName = 'OneDrive-FileSort-Daily'
+    $localFolder = Join-Path $env:LOCALAPPDATA 'OneDriveFileSort'
+    $scriptPath = Join-Path $localFolder ('daily-sort-' + [Guid]::NewGuid().ToString('N') + '.ps1')
+    $logPath = Join-Path $localFolder 'latest.log'
+    $powershellPath = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+    if (-not (Test-Path -LiteralPath $powershellPath -PathType Leaf)) {
+        throw 'Windows PowerShellが見つかりません。'
+    }
+
+    $aliases = Read-Host '案件ルール（例：略称=フォルダ名,フォルダ名）。案件指定なしはEnter'
+    $timeInput = Read-Host '毎日の実行時刻（24時間制 HH:mm）。12:00ならEnter'
+    if ([string]::IsNullOrWhiteSpace($timeInput)) { $timeInput = '12:00' }
+    if ($timeInput -notmatch '^(?:[01][0-9]|2[0-3]):[0-5][0-9]$') {
+        throw '時刻を HH:mm 形式で入力して再実行してください。'
+    }
+    $clock = $timeInput -split ':'
+    $nextRun = [DateTime]::Today.AddHours([int]$clock[0]).AddMinutes([int]$clock[1])
+    if ($nextRun -le (Get-Date)) { $nextRun = $nextRun.AddDays(1) }
+
+    $existing = Get-ScheduledTask -TaskPath '\' -TaskName $taskName -ErrorAction SilentlyContinue
+    $runnerRegex = [regex]::Escape('"' + (Join-Path $localFolder 'daily-sort-')) + '[0-9a-f]{32}\.ps1"'
+    if ($null -ne $existing -and
+        ($existing.Actions.Count -ne 1 -or $existing.Actions[0].Arguments -notmatch $runnerRegex)) {
+        throw '同じ名前の別のタスクがあります。設定を中止しました。'
+    }
+    if ($null -ne $existing -and $existing.State -eq 'Running') {
+        throw '既存の整理タスクが実行中です。終了後に設定し直してください。'
+    }
+    Write-Host ("対象：{0} の直下と「ドキュメント」配下" -f $root)
+    Write-Host "時刻：毎日 $timeInput（ログオン中）"
+    Write-Host ("案件ルール：{0}" -f $aliases)
+    if ($null -ne $existing) { Write-Host '既存の日次設定を更新します。' }
+    $mode = Read-Host '候補の記録だけなら REPORT、一致したファイルを自動移動するなら AUTO。中止はEnter'
+    if ($mode -notin @('REPORT', 'AUTO')) {
+        Write-Host '日次設定は変更していません。'
+        return
+    }
+
+    $action = New-ScheduledTaskAction -Execute $powershellPath -Argument ('-NoProfile -NonInteractive -File "{0}"' -f $scriptPath) -WorkingDirectory $localFolder
+    $trigger = New-ScheduledTaskTrigger -Daily -At $nextRun
+    $currentUser = [Security.Principal.WindowsIdentity]::GetCurrent().Name
+    $principal = New-ScheduledTaskPrincipal -UserId $currentUser -LogonType Interactive -RunLevel Limited
+    $taskSettings = New-ScheduledTaskSettingsSet -StartWhenAvailable -MultipleInstances IgnoreNew -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+
+    $runner = @'
+$ErrorActionPreference = 'Stop'
+$settingsJson = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('__SETTINGS_BASE64__'))
+$settings = ConvertFrom-Json -InputObject $settingsJson
+if ($settings.Mode -notin @('AUTO', 'REPORT')) { throw '実行モードを確認できません。' }
+
+$logPath = Join-Path $PSScriptRoot 'latest.log'
+Start-Transcript -LiteralPath $logPath | Out-Null
+try {
+    Write-Host ("OneDrive整理モード：{0}" -f $settings.Mode)
+    &amp; {
+        $root = $settings.Root
+        if ([string]::IsNullOrWhiteSpace($root) -or
+            -not (Test-Path -LiteralPath $root -PathType Container)) {
+            throw '業務用OneDriveの同期フォルダが見つかりません。'
+        }
+        $root = (Get-Item -LiteralPath $root -ErrorAction Stop).FullName
+        $managedFolder = '(?i)Teams|Copilot'
+        $rootFolders = @(Get-ChildItem -LiteralPath $root -Directory -ErrorAction Stop |
+            Where-Object { $_.Name -notmatch $managedFolder -and -not $_.LinkType })
+        $documents = $rootFolders | Where-Object Name -eq 'ドキュメント' | Select-Object -First 1
+    
+        $specialFolders = @('研修', '経費', 'プロフィール')
+        $entryText = $settings.Aliases
+        $rules = @(
+            [pscustomobject]@{ Folder = '研修'; Pattern = '研修|トレーニング|(?&lt;![a-z])training(?![a-z])' }
+            [pscustomobject]@{ Folder = '経費'; Pattern = '領収書|(?&lt;![a-z])receipt(?![a-z])' }
+            [pscustomobject]@{ Folder = 'プロフィール'; Pattern = '健康保険[ _　-]*資格確認書' }
+            foreach ($entry in ($entryText -split '[,、，]' | Where-Object { $_.Trim() })) {
+                $parts = $entry.Trim() -split '=', 2
+                $keyword = $parts[0].Trim()
+                $name = $parts[-1].Trim()
+                $folder = $rootFolders | Where-Object {
+                    $_.Name -eq $name -and $_.Name -notin (@('ドキュメント', 'Documents') + $specialFolders)
+                } | Select-Object -First 1
+                if (-not $keyword -or $null -eq $folder) {
+                    Write-Warning "案件ルールを登録できません：$entry"
+                    continue
+                }
+                $keywords = @($keyword, $folder.Name) | Select-Object -Unique
+                foreach ($term in $keywords) {
+                    $pattern = [regex]::Escape($term)
+                    if ($term -match '^[a-z0-9]+$') {
+                        $pattern = "(?&lt;![a-z0-9])$pattern(?![a-z0-9])"
+                    }
+                    [pscustomobject]@{ Folder = $folder.Name; Pattern = $pattern }
+                }
+            }
+        )
+    
+        $files = @(Get-ChildItem -LiteralPath $root -File -ErrorAction Stop)
+        if ($null -ne $documents) {
+            $foldersToCheck = New-Object 'System.Collections.Generic.Stack[System.IO.DirectoryInfo]'
+            $foldersToCheck.Push($documents)
+            $files += @(while ($foldersToCheck.Count -gt 0) {
+                $current = $foldersToCheck.Pop()
+                try {
+                    $items = @(Get-ChildItem -LiteralPath $current.FullName -ErrorAction Stop)
+                } catch {
+                    Write-Warning "読み取れないフォルダをスキップしました：$($current.Name)"
+                    continue
+                }
+    
+                $items | Where-Object { -not $_.PSIsContainer -and -not $_.LinkType }
+                foreach ($folder in $items) {
+                    if ($folder.PSIsContainer -and -not $folder.LinkType -and $folder.Name -notmatch $managedFolder) {
+                        $foldersToCheck.Push($folder)
+                    }
+                }
+            })
+        } else {
+            Write-Warning '「ドキュメント」フォルダが見つからないため、OneDrive直下のみ確認します。'
+        }
+    
+        $number = 0
+        $results = @(
+            foreach ($file in ($files | Where-Object { -not $_.LinkType } | Sort-Object FullName)) {
+                $number++
+                $candidates = @()
+                $destination = $null
+                if ($file.Extension -in @('.url', '.lnk', '.website')) {
+                    $status = '保留（ショートカット）'
+                } else {
+                    $candidates = @($rules | Where-Object { $file.BaseName -match $_.Pattern } |
+                        Select-Object -ExpandProperty Folder -Unique)
+                    $status = switch ($candidates.Count) {
+                        0 { '保留（該当なし）' }
+                        1 { '対象' }
+                        default { '保留（複数候補）' }
+                    }
+                    if ($candidates.Count -eq 1) {
+                        $destinationFolder = Join-Path $root $candidates[0]
+                        if ($candidates[0] -ne '経費' -and
+                            $candidates[0] -notin $rootFolders.Name) {
+                            $status = '保留（移動先フォルダなし）'
+                        } else {
+                            $destination = Join-Path $destinationFolder $file.Name
+                            if (Test-Path -LiteralPath $destination) {
+                                $status = '保留（移動先に同名あり）'
+                            } elseif (-not (Test-Path -LiteralPath $destinationFolder)) {
+                                $status = '対象（経費フォルダを作成）'
+                            }
+                        }
+                    }
+                }
+                [pscustomobject]@{
+                    Number = $number
+                    Source = $file.FullName
+                    RelativePath = $file.FullName.Substring($root.Length + 1)
+                    Target = $destination
+                    Candidates = $candidates -join ' / '
+                    Status = $status
+                }
+            }
+        )
+    
+        $results | Where-Object { $_.Status -like '対象*' } | Group-Object Target |
+            Where-Object Count -gt 1 | ForEach-Object {
+                foreach ($item in $_.Group) { $item.Status = '保留（候補間で同名）' }
+            }
+        if ($results.Count -eq 0) {
+            Write-Host '確認対象のファイルはありませんでした。'
+            return
+        }
+        $results | Format-Table @{Label='番号';Expression={$_.Number}},
+            @{Label='現在の場所';Expression={$_.RelativePath}},
+            @{Label='移動先候補';Expression={$_.Candidates}},
+            @{Label='判定';Expression={$_.Status}} -AutoSize -Wrap | Out-Host
+    
+        if ($settings.Mode -eq 'REPORT') {
+            Write-Host '確認のみで終了しました。'
+            return
+        }
+        $chosen = @($results | Where-Object { $_.Status -like '対象*' })
+        if ($chosen.Count -eq 0) {
+            Write-Host '移動できる候補はありません。'
+            return
+        }
+        foreach ($item in $chosen) {
+            try {
+                $parent = Split-Path -LiteralPath $item.Target
+                if ($item.Candidates -eq '経費' -and -not (Test-Path -LiteralPath $parent)) {
+                    [void][IO.Directory]::CreateDirectory($parent)
+                }
+                $folder = Get-Item -LiteralPath $parent -ErrorAction Stop
+                if (-not $folder.PSIsContainer -or $folder.LinkType) {
+                    throw '移動先が通常のフォルダではありません。'
+                }
+                $source = Get-Item -LiteralPath $item.Source -ErrorAction Stop
+                if ($source.PSIsContainer -or $source.LinkType) {
+                    throw '元ファイルが通常のファイルではありません。'
+                }
+                [IO.File]::Move($item.Source, $item.Target)
+                Write-Host ("移動済み：{0} → {1}" -f $item.RelativePath, $item.Candidates)
+            } catch {
+                Write-Warning ("移動できませんでした：{0}（{1}）" -f $item.RelativePath, $_.Exception.Message)
+            }
+        }
+    }
+} catch {
+    Write-Host ("実行エラー：{0}" -f $_.Exception.Message)
+    throw
+} finally {
+    Stop-Transcript | Out-Null
+}
+'@
+    $runnerSettings = [ordered]@{ Root = $root; Aliases = $aliases; Mode = $mode.ToUpperInvariant() }
+    $encodedSettings = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes(($runnerSettings | ConvertTo-Json -Compress)))
+    $runner = $runner.Replace('__SETTINGS_BASE64__', $encodedSettings)
+    [void][ScriptBlock]::Create($runner)
+    [void][IO.Directory]::CreateDirectory($localFolder)
+    try {
+        [IO.File]::WriteAllText($scriptPath, $runner, [Text.UTF8Encoding]::new($true))
+        Register-ScheduledTask -TaskPath '\' -TaskName $taskName -Action $action -Trigger $trigger `
+            -Principal $principal -Settings $taskSettings -Description 'OneDriveの整理候補を毎日確認' -Force | Out-Null
+    } catch {
+        if ([IO.File]::Exists($scriptPath)) { [IO.File]::Delete($scriptPath) }
+        throw
+    }
+
+    $info = Get-ScheduledTaskInfo -TaskName $taskName -TaskPath '\'
+    Write-Host ("登録済み：{0}（{1}）" -f $taskName, $mode.ToUpperInvariant())
+    Write-Host ("次回実行：{0}" -f $info.NextRunTime)
+    Write-Host ("実行後のログ：{0}" -f $logPath)
+}</pre>
+  </details>
+</div>
 </section><footer>公開用の一般的な指示文・要件のみを掲載しています。</footer></main><script>
 document.querySelectorAll('[data-copy]').forEach(button=>button.addEventListener('click',async()=>{
   const target=document.getElementById(button.dataset.copy);
   const status=document.getElementById(button.dataset.copy+'-status');
   try{await navigator.clipboard.writeText(target.textContent);status.textContent=`コピーしました。${button.dataset.copyTo || 'Copilot'}に貼り付けてください。`}
-  catch(e){const range=document.createRange();range.selectNodeContents(target);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);status.textContent='自動コピーできませんでした。選択された文章をCtrl+Cなどでコピーしてください。'}
+  catch(e){const details=target.closest('details');if(details)details.open=true;const range=document.createRange();range.selectNodeContents(target);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);status.textContent='自動コピーできませんでした。選択された文章をCtrl+Cなどでコピーしてください。'}
 }));
 </script></body></html>
