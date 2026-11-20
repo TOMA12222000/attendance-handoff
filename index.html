@@ -997,7 +997,7 @@ try {
 <ol>
 <li>社内で許可された環境で、通常権限の Windows PowerShell を開きます。</li>
 <li>上のボタンでコードをコピーし、PowerShell に貼り付けて実行します。貼り付け確認が出たら内容を確認します。</li>
-<li><code>PASS</code> が16件表示されることを確認します。</li>
+<li><code>PASS</code> が23件表示されることを確認します。</li>
 </ol>
 <p>このコードはローカルに4ファイルを保存し、模擬テストを実行します。今回はタスク登録と本番打刻は保留です。表示された保存先は次回の設定で使います。</p>
 <details><summary>貼り付けるコードを確認</summary><pre class="prompt powershell" id="attendance-test-code">&amp; {
@@ -1049,6 +1049,20 @@ function Run-Reminder($kind,$day,$folder,$settings,[switch]$Manual) {
         [void][datetime]::ParseExact($entry,'yyyy-MM-dd',[cultureinfo]::InvariantCulture)
     }
     if ($offDays -contains $date) { return }
+    # BEGIN JAPAN HOLIDAY DATA
+    if ($kind -eq 'Finish' -and !$Manual) {
+        # Cabinet Office CSV: https://www8.cao.go.jp/chosei/shukujitsu/syukujitsu.csv
+        $holidays = @{
+            2026 = '0101 0112 0211 0223 0320 0429 0503 0504 0505 0506 0720 0811 0921 0922 0923 1012 1103 1123'
+            2027 = '0101 0111 0211 0223 0321 0322 0429 0503 0504 0505 0719 0811 0920 0923 1011 1103 1123'
+        }
+        if (!$holidays.ContainsKey($day.Year)) {
+            Tell "$($day.Year)年の日本の祝日データがありません。共有ページから祝日データを更新してください。実際の終業時には Finish.cmd を使用できます。"
+            return
+        }
+        if (($holidays[$day.Year] -split ' ') -contains $day.ToString('MMdd',[cultureinfo]::InvariantCulture)) { return }
+    }
+    # END JAPAN HOLIDAY DATA
     $marker = Join-Path $folder "$date-$kind.txt"
     $endMarker = Join-Path $folder "$date-Finish.txt"
     if ($kind -eq 'Start' -and (Test-Path -LiteralPath $endMarker) -and
@@ -1214,6 +1228,29 @@ try {
     $bad = $false
     try { Read-Portal 'http://example.invalid/' } catch { $bad = $true }
     Check $bad 'invalid URL rejected'
+    $before = $opens
+    $day = [datetime]'2026-11-23'
+    Run Finish @()
+    Check ($opens -eq $before) 'national holiday suppresses scheduled finish'
+    $day = [datetime]'2026-05-06'
+    Run Finish @()
+    Check ($opens -eq $before) 'substitute holiday suppresses scheduled finish'
+    $day = [datetime]'2026-09-22'
+    Run Finish @()
+    Check ($opens -eq $before) 'holiday between two national holidays suppresses scheduled finish'
+    $day = [datetime]'2026-11-24'
+    Run Finish @($true,$true)
+    Check ($opens -eq ($before + 1)) 'ordinary weekday still opens and confirms finish'
+    $day = [datetime]'2028-01-04'
+    $messageCount = $messages.Count
+    Run Finish @()
+    Check ($opens -eq ($before + 1) -and $messages.Count -eq ($messageCount + 1) -and
+        $messages[-1] -like '*2028*') 'unsupported year shows maintenance notice and suppresses scheduled finish'
+    Run Finish @($true) -Manual
+    Check ($opens -eq ($before + 2)) 'manual finish is available during unsupported year'
+    $day = [datetime]'2026-11-23'
+    Run Finish @($true) -Manual
+    Check ($opens -eq ($before + 3)) 'manual finish is available on a national holiday'
 } finally {
     foreach ($file in [IO.Directory]::GetFiles($folder)) { [IO.File]::Delete($file) }
     [IO.Directory]::Delete($folder)
@@ -1241,7 +1278,7 @@ try {
 <ol>
 <li>設定用のコードをコピーし、通常権限の Windows PowerShell に1回貼り付けます。候補が複数なら、模擬テストで表示された保存先と一致する番号を選びます。</li>
 <li>対象ファイルと設定内容を確認して <code>REGISTER</code> と入力します。初回のみ、表示だけで打刻されない会社指定の公式入口URL（HTTPS、クエリ・フラグメントなし）をEY端末内で入力します。設定済みの場合は退勤通知を更新し、出勤設定とURLを引き継ぎます。</li>
-<li>表示された休日ファイルに平日の休日・全日休暇を <code>yyyy-MM-dd</code> 形式で1行に1日ずつ保存します。タスク スケジューラのライブラリで、本人の <code>LysitheaAttendance-…-Finish</code> のトリガーが月〜金19:00・ランダム遅延30分であることを確認します。実際の通知は平日19:00〜19:30の間です。</li>
+<li>表示された休日ファイルに会社独自の平日休日・全日休暇を <code>yyyy-MM-dd</code> 形式で1行に1日ずつ保存します。タスク スケジューラのライブラリで、本人の <code>LysitheaAttendance-…-Finish</code> のトリガーが月〜金19:00・ランダム遅延30分であることを確認します。実際の通知は平日19:00〜19:30の間です。</li>
 </ol>
 <p>定刻に勤務を続けている場合は「いいえ」で保留し、実際に終業したら同じ保存先の <code>Finish.cmd</code> を開きます。</p>
 <details><summary>設定コードを確認</summary><pre class="prompt powershell" id="attendance-setup-code">&amp; {
@@ -1320,6 +1357,20 @@ function Run-Reminder($kind,$day,$folder,$settings,[switch]$Manual) {
         [void][datetime]::ParseExact($entry,'yyyy-MM-dd',[cultureinfo]::InvariantCulture)
     }
     if ($offDays -contains $date) { return }
+    # BEGIN JAPAN HOLIDAY DATA
+    if ($kind -eq 'Finish' -and !$Manual) {
+        # Cabinet Office CSV: https://www8.cao.go.jp/chosei/shukujitsu/syukujitsu.csv
+        $holidays = @{
+            2026 = '0101 0112 0211 0223 0320 0429 0503 0504 0505 0506 0720 0811 0921 0922 0923 1012 1103 1123'
+            2027 = '0101 0111 0211 0223 0321 0322 0429 0503 0504 0505 0719 0811 0920 0923 1011 1103 1123'
+        }
+        if (!$holidays.ContainsKey($day.Year)) {
+            Tell "$($day.Year)年の日本の祝日データがありません。共有ページから祝日データを更新してください。実際の終業時には Finish.cmd を使用できます。"
+            return
+        }
+        if (($holidays[$day.Year] -split ' ') -contains $day.ToString('MMdd',[cultureinfo]::InvariantCulture)) { return }
+    }
+    # END JAPAN HOLIDAY DATA
     $marker = Join-Path $folder "$date-$kind.txt"
     $endMarker = Join-Path $folder "$date-Finish.txt"
     if ($kind -eq 'Start' -and (Test-Path -LiteralPath $endMarker) -and
@@ -1424,7 +1475,7 @@ try {
         try {
             $hash = [BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($normalized))).Replace('-','')
         } finally { $sha.Dispose() }
-        if ($hash -ne '2A9F0AC6AE1F6B31636B245E93BB366DF60078F5FFD723007CC6C8F57050E3F0') {
+        if ($hash -notin '2A9F0AC6AE1F6B31636B245E93BB366DF60078F5FFD723007CC6C8F57050E3F0','FBAAC12D2B21005D04F8F50200406A7D0C263D1290642F7CD84AD4F29F29857B','E859003C79CDCBF1F0C4BE96E5A6A4C287D9E34B7A0CF0EEBF8A78F165A8E52C') {
             throw '配布済みの旧版と内容が一致しません。対象ファイルを確認してください。'
         }
     }
@@ -1471,6 +1522,97 @@ try {
     $offDays = Join-Path $env:LOCALAPPDATA 'LysitheaAttendanceHelper\off-days.txt'
     Write-Host ('休日・全日休暇ファイル: ' + $offDays)
     Write-Host '平日の休日・全日休暇を yyyy-MM-dd 形式で1行に1日ずつ保存してください。'
+}
+</pre></details>
+</div>
+<div id="attendance-holidays" class="skill-field">
+<div class="bar"><h3>日本の祝日データだけ更新</h3><button type="button" data-copy="attendance-holiday-code" data-copy-to="Windows PowerShell" aria-label="日本の祝日更新用PowerShellコードをコピー">PowerShellコードをコピー</button></div>
+<p id="attendance-holiday-code-status" class="status" role="status"></p>
+<p>2026年・2027年の祝日、振替休日、国民の休日を定刻の退勤通知から除外します。判定はオフラインで、未対応年は更新案内を表示します。</p>
+<ol>
+<li>登録済みの場合は、タスク スケジューラの退勤タスクの「操作」で <code>Attendance.ps1</code> のパスを確認します。</li>
+<li>この欄のコードを通常権限の Windows PowerShell に貼り付け、同じファイルを選びます。更新が社内で許可されていれば <code>UPDATE</code> と入力します。</li>
+<li>次回の起動から祝日判定が有効になります。通知時刻の変更やタスクの再登録は不要です。</li>
+</ol>
+<p>会社独自の休日と全日休暇は引き続き <code>off-days.txt</code> に記入します。未対応年はデータが更新されたこの欄のコードを再適用してください。実際の終業時は <code>Finish.cmd</code> または公式画面から操作できます。</p>
+<p><a href="https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html">内閣府の公式祝日一覧</a></p>
+<details><summary>祝日更新コードを確認</summary><pre class="prompt powershell" id="attendance-holiday-code">&amp; {
+    $ErrorActionPreference = 'Stop'
+    $candidates = @(Get-ChildItem -LiteralPath $env:LOCALAPPDATA -Directory -Filter 'LysitheaHelper-*' |
+        ForEach-Object { Get-Item -LiteralPath (Join-Path $_.FullName 'Attendance.ps1') -ErrorAction SilentlyContinue } |
+        Where-Object { -not $_.PSIsContainer } | Sort-Object FullName)
+
+    if ($candidates.Count -eq 1) {
+        $path = $candidates[0].FullName
+    } elseif ($candidates.Count -gt 1) {
+        Write-Host '複数の候補があります。模擬テスト時に表示された保存先と照合してください。'
+        for ($i = 0; $i -lt $candidates.Count; $i++) {
+            Write-Host ('[{0}] {1}' -f ($i + 1),$candidates[$i].FullName)
+        }
+        $answer = Read-Host '一致する番号を入力してください（Enterで中止）'
+        $number = 0
+        if (![int]::TryParse($answer,[ref]$number) -or $number -lt 1 -or $number -gt $candidates.Count) {
+            Write-Host '候補が選択されなかったため中止しました。'
+            return
+        }
+        $path = $candidates[$number - 1].FullName
+    } else {
+        Write-Host '自動検出できませんでした。模擬テスト時に表示された保存先を確認してください。'
+        $answer = Read-Host 'Attendance.ps1 のフルパスを入力してください（Enterで中止）'
+        if ([string]::IsNullOrWhiteSpace($answer)) { return }
+        $path = $answer.Trim().Trim('"')
+    }
+
+    $file = Get-Item -LiteralPath $path
+    if ($file.PSIsContainer -or $file.Name -ne 'Attendance.ps1') {
+        throw '模擬テスト済みの Attendance.ps1 を指定してください。'
+    }
+    $block = @'
+    # BEGIN JAPAN HOLIDAY DATA
+    if ($kind -eq 'Finish' -and !$Manual) {
+        # Cabinet Office CSV: https://www8.cao.go.jp/chosei/shukujitsu/syukujitsu.csv
+        $holidays = @{
+            2026 = '0101 0112 0211 0223 0320 0429 0503 0504 0505 0506 0720 0811 0921 0922 0923 1012 1103 1123'
+            2027 = '0101 0111 0211 0223 0321 0322 0429 0503 0504 0505 0719 0811 0920 0923 1011 1103 1123'
+        }
+        if (!$holidays.ContainsKey($day.Year)) {
+            Tell "$($day.Year)年の日本の祝日データがありません。共有ページから祝日データを更新してください。実際の終業時には Finish.cmd を使用できます。"
+            return
+        }
+        if (($holidays[$day.Year] -split ' ') -contains $day.ToString('MMdd',[cultureinfo]::InvariantCulture)) { return }
+    }
+    # END JAPAN HOLIDAY DATA
+'@
+    $original = [IO.File]::ReadAllText($file.FullName)
+    $source = $original.Replace([string][char]13,'')
+    $markers = [regex]::Matches($source,'(?ms)^    # BEGIN JAPAN HOLIDAY DATA\n.*?^    # END JAPAN HOLIDAY DATA(?=\n|$)')
+    if ($markers.Count -eq 1) {
+        $match = $markers[0]
+        $updated = $source.Remove($match.Index,$match.Length).Insert($match.Index,$block)
+    } elseif ($markers.Count -eq 0 -and $source -notmatch 'JAPAN HOLIDAY DATA') {
+        $anchor = '    if ($offDays -contains $date) { return }'
+        if ([regex]::Matches($source,'(?m)^' + [regex]::Escape($anchor) + '$').Count -ne 1) {
+            throw '対応する配布版の退勤処理が見つかりません。'
+        }
+        $updated = $source.Replace($anchor,$anchor + [char]10 + $block)
+    } else {
+        throw '既存の祝日データの範囲を特定できません。'
+    }
+
+    Write-Host ('対象ファイル: ' + $file.FullName)
+    if ($updated.Replace([string][char]13,'') -ceq $source) {
+        Write-Host 'このファイルには同じ祝日データが入っています。'
+        return
+    }
+    Write-Host '祝日判定だけを更新します。登録済みタスクの時刻や設定はそのままです。'
+    $answer = Read-Host '使用中のパスであり、更新が社内で許可されている場合のみ UPDATE と入力'
+    if ($answer -cne 'UPDATE') { return }
+    if ([IO.File]::ReadAllText($file.FullName) -cne $original) { throw '確認中にファイルが変更されました。' }
+    $temporary = $file.FullName + '.' + [guid]::NewGuid().ToString('N') + '.tmp'
+    [IO.File]::WriteAllText($temporary,$updated.Replace([string][char]13,'').Replace([string][char]10,[Environment]::NewLine),[Text.UTF8Encoding]::new($true))
+    try { [IO.File]::Replace($temporary,$file.FullName,[System.Management.Automation.Language.NullString]::Value) }
+    finally { [IO.File]::Delete($temporary) }
+    Write-Host '更新完了。登録済みの退勤タスクは次回起動時にこのファイルを読み込みます。'
 }
 </pre></details>
 </div>
