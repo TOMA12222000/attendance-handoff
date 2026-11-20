@@ -5,7 +5,7 @@
 nav{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}nav a{color:#086e66;background:#e4f0ed;border-radius:8px;padding:8px 14px;text-decoration:none;font-weight:700}nav a:hover{text-decoration:underline}section{scroll-margin-top:20px}.note{color:#50606a;font-size:.9rem}.prompt{line-height:1.9}a:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}
 summary{cursor:pointer;color:#086e66;font-weight:700;padding:12px 0}summary:focus-visible{outline:3px solid #e8ad42;outline-offset:3px}.guide{border-top:1px solid #e4eceb;margin-top:12px;padding-top:12px;overflow-wrap:anywhere}.guide h2,.guide h3,.guide h4{line-height:1.5;margin-top:28px}.guide ul{padding-left:24px}.table-wrap{max-width:100%;overflow-x:auto;margin:16px 0}.guide table{border-collapse:collapse;width:100%;font-size:.85rem;line-height:1.6;min-width:560px}.guide th,.guide td{padding:10px;border:1px solid #dce7e5;text-align:left;vertical-align:top}.guide th{background:#edf5f3}.guide code{font-size:.9em;background:#edf5f3;padding:2px 4px;border-radius:4px}.skill-field{margin-top:26px}.skill-field h3{font-size:1rem;margin:0}.skill-field small{font-weight:400;color:#50606a}.skill-field .prompt{padding-top:14px}.prompt.powershell{font-family:Consolas,monospace;font-size:.9rem;background:#f4f7f7;padding:16px;border-radius:8px}
 </style></head><body><main>
-<header><div class="eyebrow">HANDOFF NOTE</div><h1>Copilot用指示文・<br>勤怠自動化の共有ページ</h1><p>用途に合う指示文やコードをコピーし、Copilot、Agent Builder、またはWindows PowerShellに貼り付けてください。</p><nav aria-label="指示文を選ぶ"><a href="#excel-agent">Excel品質アシスタント</a><a href="#powerpoint-agent">PowerPoint品質アシスタント</a><a href="#onedrive">OneDriveファイル数</a><a href="#copilot">Copilotカスタム指示</a><a href="#excel">Excel個人設定</a><a href="#powerpoint">PowerPoint Skill</a><a href="#rule-guide">ルール設計・導入ガイド</a><a href="#attendance">勤怠打刻自動化</a></nav></header>
+<header><div class="eyebrow">HANDOFF NOTE</div><h1>Copilot用指示文・<br>勤怠自動化の共有ページ</h1><p>用途に合う指示文やコードをコピーし、Copilot、Agent Builder、またはWindows PowerShellに貼り付けてください。</p><nav aria-label="指示文を選ぶ"><a href="#excel-agent">Excel品質アシスタント</a><a href="#powerpoint-agent">PowerPoint品質アシスタント</a><a href="#onedrive">OneDriveファイル数</a><a href="#onedrive-classification">OneDriveの分類候補</a><a href="#copilot">Copilotカスタム指示</a><a href="#excel">Excel個人設定</a><a href="#powerpoint">PowerPoint Skill</a><a href="#rule-guide">ルール設計・導入ガイド</a><a href="#attendance">勤怠打刻自動化</a></nav></header>
 <section id="copilot" aria-labelledby="copilot-heading"><div class="bar"><h2 id="copilot-heading">Microsoft 365 Copilot共通カスタム指示｜統合版</h2><button type="button" data-copy="copilot-prompt" aria-label="Copilotカスタム指示の全文をコピー">全文をコピー</button></div><p class="note">既存8項目にExcel・PowerPointの共通ルールを追記した統合版です。「全文をコピー」で、現在の共通カスタム指示をこの全文に置き換えてください。追加分を別途貼り付ける必要はありません。</p><div id="copilot-prompt-status" class="status" role="status" aria-live="polite"></div><div id="copilot-prompt" class="prompt">あなたは、私の戦略コンサルティング業務における生産性、思考・分析品質、成果物の完成度、意思決定の質を最大化するアシスタントである。
 
 1. 基本方針
@@ -474,6 +474,101 @@ $results | Format-Table -AutoSize</pre>
 </div>
 <p class="note">フォルダ別の件数はサブフォルダを含みます。直下にあるTeams・Copilotの管理用と見られるフォルダは、フォルダ名で判定して <code>Skipped</code> と表示します。<code>Could not count</code> は集計エラーを示します。</p>
 <p>整理は、集計 → ファイル名などから既存フォルダへの分類ルール作成 → 移動先候補を一覧で確認 → 承認済みルールで移動 → 新規ファイルに適用の順で進めます。Teams・Copilotなどが管理するフォルダは整理対象から外します。</p>
+<div class="skill-field" id="onedrive-classification">
+  <div class="bar">
+    <h3>ファイル名から移動先候補を確認</h3>
+    <button type="button" data-copy="onedrive-preview-code" data-copy-to="Windows PowerShell" aria-label="移動先候補を確認するPowerShellコードをコピー">コピー</button>
+  </div>
+  <p>Windows PowerShellに貼り付けて実行し、表示された入力欄に既存の案件フォルダ名をカンマ区切りで入れます。ファイル名に案件名や研修のキーワードがあると、対応する既存フォルダを候補として表示します。</p>
+  <p class="note">確認範囲はOneDrive直下と「ドキュメント」配下です。Teams・Copilotの名前を含むフォルダは検索対象外です。候補が複数ある場合や見つからない場合は「保留」と表示します。ファイルの移動・削除、集計結果の送信は行いません。</p>
+  <div id="onedrive-preview-code-status" class="status" role="status"></div>
+  <pre id="onedrive-preview-code" class="prompt powershell">&amp; {
+    $root = $env:OneDriveCommercial
+    if ([string]::IsNullOrWhiteSpace($root) -or
+        -not (Test-Path -LiteralPath $root -PathType Container)) {
+        throw '業務用OneDriveの同期フォルダが見つかりません。'
+    }
+
+    $root = (Get-Item -LiteralPath $root -ErrorAction Stop).FullName
+    $managedFolder = '(?i)Teams|Copilot'
+    $rootFolders = @(Get-ChildItem -LiteralPath $root -Directory -ErrorAction Stop |
+        Where-Object { $_.Name -notmatch $managedFolder -and -not $_.LinkType })
+    $documents = $rootFolders | Where-Object Name -eq 'ドキュメント' | Select-Object -First 1
+
+    $names = Read-Host '既存の案件フォルダ名を入力してください（複数はカンマ区切り、研修だけ確認する場合はEnter）'
+    $projectNames = @($names -split '[,、，]' |
+        ForEach-Object { $_.Trim() } | Where-Object { $_ } | Select-Object -Unique)
+
+    $rules = @(
+        foreach ($name in $projectNames) {
+            $folder = $rootFolders |
+                Where-Object { $_.Name -eq $name -and $_.Name -notin @('ドキュメント', 'Documents', '研修') } |
+                Select-Object -First 1
+            if ($null -eq $folder) {
+                Write-Warning "対象の案件フォルダとして使えません：$name"
+                continue
+            }
+            [pscustomobject]@{ Folder = $folder.Name; Pattern = [regex]::Escape($folder.Name) }
+        }
+
+        $training = $rootFolders | Where-Object Name -eq '研修' | Select-Object -First 1
+        if ($null -ne $training) {
+            [pscustomobject]@{ Folder = $training.Name; Pattern = '研修|トレーニング|(?&lt;![a-z])training(?![a-z])' }
+        } else {
+            Write-Warning '既存の「研修」フォルダが見つかりません。'
+        }
+    )
+
+    $files = @(Get-ChildItem -LiteralPath $root -File -ErrorAction Stop)
+    if ($null -ne $documents) {
+        $foldersToCheck = New-Object 'System.Collections.Generic.Stack[System.IO.DirectoryInfo]'
+        $foldersToCheck.Push($documents)
+        $files += @(while ($foldersToCheck.Count -gt 0) {
+            $current = $foldersToCheck.Pop()
+            try {
+                $items = @(Get-ChildItem -LiteralPath $current.FullName -ErrorAction Stop)
+            } catch {
+                Write-Warning "読み取れないフォルダをスキップしました：$($current.Name)"
+                continue
+            }
+
+            $items | Where-Object { -not $_.PSIsContainer -and -not $_.LinkType }
+            foreach ($folder in $items) {
+                if ($folder.PSIsContainer -and -not $folder.LinkType -and $folder.Name -notmatch $managedFolder) {
+                    $foldersToCheck.Push($folder)
+                }
+            }
+        })
+    } else {
+        Write-Warning '「ドキュメント」フォルダが見つからないため、OneDrive直下のみ確認します。'
+    }
+
+    $results = @(
+        foreach ($file in ($files | Where-Object { -not $_.LinkType } | Sort-Object FullName)) {
+            $candidates = @($rules | Where-Object { $file.BaseName -match $_.Pattern } |
+                Select-Object -ExpandProperty Folder -Unique)
+            $status = switch ($candidates.Count) {
+                0 { '保留（該当なし）' }
+                1 { '要確認' }
+                default { '保留（複数候補）' }
+            }
+
+            [pscustomobject]@{
+                '現在の場所' = $file.FullName.Substring($root.Length + 1)
+                '移動先候補' = $candidates -join ' / '
+                '判定' = $status
+            }
+        }
+    )
+
+    if ($results.Count -eq 0) {
+        Write-Host '確認対象のファイルはありませんでした。'
+    } else {
+        $results | Format-Table -AutoSize -Wrap
+        Write-Host ("確認対象：{0} 件（ファイルの移動なし）" -f $results.Count)
+    }
+}</pre>
+</div>
 </section><footer>公開用の一般的な指示文・要件のみを掲載しています。</footer></main><script>
 document.querySelectorAll('[data-copy]').forEach(button=>button.addEventListener('click',async()=>{
   const target=document.getElementById(button.dataset.copy);
