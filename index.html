@@ -1007,10 +1007,8 @@ try {
     [void](New-Item -ItemType Directory -Path $folder)
     $source = @'
 param(
-    [ValidateSet('Setup','Start','Finish','Remove','Library')]
+    [ValidateSet('Setup','FinishSchedule','Start','Finish','Remove','Library')]
     [string]$Mode = 'Start',
-    [ValidatePattern('^([01][0-9]|2[0-3]):[0-5][0-9]$')]
-    [string]$EndTime = '17:30',
     [switch]$NativeStart,
     [switch]$DirectPunchPage,
     [switch]$Manual
@@ -1082,9 +1080,11 @@ try {
     $prefix = "LysitheaAttendance-$sid"
     $description = "LysitheaAttendanceHelper v1 | $scriptPath"
     $exe = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
-    if ($Mode -in 'Setup','Remove') {
+    if ($Mode -in 'Setup','FinishSchedule','Remove') {
+        $kinds = if ($Mode -eq 'FinishSchedule') { 'Finish' } else { 'Finish','Start' }
+        $names = @($kinds | ForEach-Object { "$prefix-$_" })
         $existing = @(Get-ScheduledTask -ErrorAction Stop | Where-Object {
-            $_.TaskPath -eq '\' -and $_.TaskName -in "$prefix-Start","$prefix-Finish"
+            $_.TaskPath -eq '\' -and $_.TaskName -in $names
         })
         foreach ($task in $existing) {
             if ($task.Description -ne $description) { throw 'Task name conflict' }
@@ -1093,31 +1093,39 @@ try {
             foreach ($task in $existing) { $task | Unregister-ScheduledTask -Confirm:$false }
             return
         }
-        $portal = Read-Portal (Read-Host 'EY端末内で、閲覧用の公式トップURLを入力（HTTPS、クエリなし）')
-        $settings = @{Portal=$portal}
-        if ($DirectPunchPage) {
-            $settings.PunchPage = Read-Portal (Read-Host '表示だけで打刻されない、承認済みの公式打刻画面URLを入力')
+        if ($Mode -eq 'Setup') {
+            $portal = Read-Portal (Read-Host 'EY端末内で、閲覧用の公式トップURLを入力（HTTPS、クエリなし）')
+            $settings = @{Portal=$portal}
+            if ($DirectPunchPage) {
+                $settings.PunchPage = Read-Portal (Read-Host '表示だけで打刻されない、承認済みの公式打刻画面URLを入力')
+            }
+            [void][IO.Directory]::CreateDirectory($root)
+            Record $config ($settings | ConvertTo-Json -Compress)
+        } else {
+            $settings = Get-Content -Raw -Encoding UTF8 -LiteralPath $config | ConvertFrom-Json
+            [void](Read-Portal $settings.Portal)
         }
-        [void][IO.Directory]::CreateDirectory($root)
-        Record $config ($settings | ConvertTo-Json -Compress)
         $off = Join-Path $root 'off-days.txt'
         if (!(Test-Path -LiteralPath $off)) { [IO.File]::WriteAllText($off,'') }
         $user = [Security.Principal.WindowsIdentity]::GetCurrent().Name
         $principal = New-ScheduledTaskPrincipal -UserId $user -LogonType Interactive -RunLevel Limited
         $options = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -MultipleInstances IgnoreNew
-        foreach ($kind in 'Finish','Start') {
+        foreach ($kind in $kinds) {
             $name = "$prefix-$kind"
             if ($kind -eq 'Start' -and $NativeStart) {
                 if ($existing.TaskName -contains $name) { Unregister-ScheduledTask -TaskName $name -Confirm:$false }
                 continue
             }
             $trigger = if ($kind -eq 'Start') { New-ScheduledTaskTrigger -AtLogOn -User $user }
-            else { New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At $EndTime }
+            else {
+                New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday `
+                    -At '19:00' -RandomDelay ([timespan]::FromMinutes(30))
+            }
             $arguments = '-NoProfile -STA -WindowStyle Hidden -File "{0}" -Mode {1}' -f $scriptPath,$kind
             $action = New-ScheduledTaskAction -Execute $exe -Argument $arguments
             [void](Register-ScheduledTask -TaskName $name -Trigger $trigger -Action $action -Principal $principal -Settings $options -Description $description -Force)
         }
-        Write-Output "登録完了。退勤通知 $EndTime / 休日ファイル $off"
+        Write-Output "登録完了。退勤通知 平日19:00〜19:30 / 休日ファイル $off"
         return
     }
     $mutex = [Threading.Mutex]::new($false,"Local\LysitheaAttendance-$sid-$Mode")
@@ -1132,7 +1140,7 @@ try {
         $mutex.Dispose()
     }
 } catch {
-    if ($Mode -in 'Setup','Remove') { throw }
+    if ($Mode -in 'Setup','FinishSchedule','Remove') { throw }
     Tell '勤怠支援の処理を完了できませんでした。公式履歴を確認し、接続・設定を確認後に再開してください。'
     exit 1
 }
@@ -1163,10 +1171,12 @@ function Run($kind,$answers,[switch]$Manual) {
 try {
     [IO.File]::WriteAllText($off,'2026-11-16')
     Run Start @()
+    Run Finish @()
     Check ($opens -eq 0) 'excluded workday'
     [IO.File]::WriteAllText($off,'')
     $day = $day.AddDays(-1)
     Run Start @()
+    Run Finish @()
     Check ($opens -eq 0) 'weekend'
     $day = $day.AddDays(1)
     Run Start @($false)
@@ -1227,11 +1237,11 @@ try {
 <div id="attendance-powershell-setup" class="skill-field">
 <div class="bar"><h3>自動実行の設定</h3><button type="button" data-copy="attendance-setup-code" data-copy-to="Windows PowerShell" aria-label="自動実行設定のPowerShellコードをコピー">PowerShellコードをコピー</button></div>
 <p id="attendance-setup-code-status" class="status" role="status"></p>
-<p>模擬テスト16件の合格、ログオン連携による正式な出勤登録、社内のタスク登録許可を確認してから進めてください。</p>
+<p>模擬テストの合格と社内のタスク登録・更新許可を確認してください。初回はログオン連携が正式な出勤登録になることも確認してください。</p>
 <ol>
 <li>設定用のコードをコピーし、通常権限の Windows PowerShell に1回貼り付けます。候補が複数なら、模擬テストで表示された保存先と一致する番号を選びます。</li>
-<li>対象ファイルと設定内容を確認して <code>REGISTER</code> と入力します。続けて、表示だけで打刻されない会社指定の公式入口URL（HTTPS、クエリ・フラグメントなし）をEY端末内で入力します。</li>
-<li>表示された休日ファイルに平日の休日・全日休暇を <code>yyyy-MM-dd</code> 形式で1行に1日ずつ保存します。タスク スケジューラのライブラリで、本人の <code>LysitheaAttendance-…-Finish</code> が月〜金17:30で、次回の実行時刻が表示されることを確認します。</li>
+<li>対象ファイルと設定内容を確認して <code>REGISTER</code> と入力します。初回のみ、表示だけで打刻されない会社指定の公式入口URL（HTTPS、クエリ・フラグメントなし）をEY端末内で入力します。設定済みの場合は退勤通知を更新し、出勤設定とURLを引き継ぎます。</li>
+<li>表示された休日ファイルに平日の休日・全日休暇を <code>yyyy-MM-dd</code> 形式で1行に1日ずつ保存します。タスク スケジューラのライブラリで、本人の <code>LysitheaAttendance-…-Finish</code> のトリガーが月〜金19:00・ランダム遅延30分であることを確認します。実際の通知は平日19:00〜19:30の間です。</li>
 </ol>
 <p>定刻に勤務を続けている場合は「いいえ」で保留し、実際に終業したら同じ保存先の <code>Finish.cmd</code> を開きます。</p>
 <details><summary>設定コードを確認</summary><pre class="prompt powershell" id="attendance-setup-code">&amp; {
@@ -1266,22 +1276,189 @@ try {
         throw '模擬テスト済みの Attendance.ps1 を指定してください。'
     }
 
+    $updated = @'
+param(
+    [ValidateSet('Setup','FinishSchedule','Start','Finish','Remove','Library')]
+    [string]$Mode = 'Start',
+    [switch]$NativeStart,
+    [switch]$DirectPunchPage,
+    [switch]$Manual
+)
+$ErrorActionPreference = 'Stop'
+$root = Join-Path $env:LOCALAPPDATA 'LysitheaAttendanceHelper'
+$config = Join-Path $root 'settings.json'
+$scriptPath = $PSCommandPath
+
+function Ask($message) {
+    # Yes / No, with No as the default. Only an explicit Yes proceeds.
+    ([System.Windows.Forms.MessageBox]::Show($message,'リシテア勤怠','YesNo','Question','Button2') -eq 'Yes')
+}
+function Tell($message) {
+    [void][System.Windows.Forms.MessageBox]::Show($message,'リシテア勤怠')
+}
+function Read-Portal($url) {
+    $uri = [uri]$url
+    if (!$uri.IsAbsoluteUri -or $uri.Scheme -ne 'https' -or !$uri.Host -or
+        $uri.UserInfo -or $uri.Query -or $uri.Fragment) { throw 'URL' }
+    $uri.AbsoluteUri
+}
+function Open-Portal($url) { Start-Process -FilePath (Read-Portal $url) }
+function Online { [Net.NetworkInformation.NetworkInterface]::GetIsNetworkAvailable() }
+function Today { (Get-Date).Date }
+function Record($file,$value) {
+    $temp = "$file.tmp"
+    [IO.File]::WriteAllText($temp,$value)
+    if ([IO.File]::Exists($file)) { [IO.File]::Replace($temp,$file,[System.Management.Automation.Language.NullString]::Value) }
+    else { [IO.File]::Move($temp,$file) }
+}
+function Run-Reminder($kind,$day,$folder,$settings,[switch]$Manual) {
+    $date = $day.ToString('yyyy-MM-dd')
+    if ($day.DayOfWeek -in 'Saturday','Sunday') { return }
+    $offDays = @(Get-Content -LiteralPath (Join-Path $folder 'off-days.txt') -Encoding UTF8 |
+        ForEach-Object { $_.Trim() } | Where-Object { $_ })
+    foreach ($entry in $offDays) {
+        [void][datetime]::ParseExact($entry,'yyyy-MM-dd',[cultureinfo]::InvariantCulture)
+    }
+    if ($offDays -contains $date) { return }
+    $marker = Join-Path $folder "$date-$kind.txt"
+    $endMarker = Join-Path $folder "$date-Finish.txt"
+    if ($kind -eq 'Start' -and (Test-Path -LiteralPath $endMarker) -and
+        [IO.File]::ReadAllText($endMarker) -eq 'Confirmed') { return }
+    $state = if (Test-Path -LiteralPath $marker) { [IO.File]::ReadAllText($marker) }
+    if ($state -eq 'Confirmed') { return }
+    if ($state -and $state -ne 'CheckHistory') { throw 'State' }
+    $label = if ($kind -eq 'Start') { '出勤' } else { '退勤' }
+    $question = if ($kind -eq 'Start') {
+        '今日は勤務日で、今から実際に勤務を開始しますか？'
+    } else { '今日は勤務日で、実際に勤務を終了しましたか？ 勤務を続ける場合は「いいえ」で保留します。' }
+    if ($state -eq 'CheckHistory') {
+        $question = "前回の${label}結果は未確認です。公式履歴を確認しますか？"
+    }
+    if ((!$Manual -or $state -eq 'CheckHistory') -and !(Ask $question)) { return }
+    if ((Today) -ne $day) { return }
+    if (!(Online)) { Tell 'ネットワーク未接続です。接続後に同じ操作を再開してください。'; return }
+    $url = if ($settings.PunchPage -and !$state) { $settings.PunchPage } else { $settings.Portal }
+    Record $marker 'CheckHistory'
+    Open-Portal $url
+    $verified = Ask "公式画面で対象日・勤務予定・履歴を確認してください。未登録で実際の${label}時に限り、公式画面で1回打刻してください。SSO・通信エラー時は履歴を再確認してください。`n`n$date の${label}時刻が公式履歴に表示されていますか？"
+    if ($verified -and (Today) -eq $day) { Record $marker 'Confirmed' }
+    else { Tell '結果は未確認です。次回は公式履歴から確認してください。' }
+}
+if ($Mode -eq 'Library') { return }
+try {
+    Add-Type -AssemblyName System.Windows.Forms
+    $sid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+    $prefix = "LysitheaAttendance-$sid"
+    $description = "LysitheaAttendanceHelper v1 | $scriptPath"
+    $exe = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+    if ($Mode -in 'Setup','FinishSchedule','Remove') {
+        $kinds = if ($Mode -eq 'FinishSchedule') { 'Finish' } else { 'Finish','Start' }
+        $names = @($kinds | ForEach-Object { "$prefix-$_" })
+        $existing = @(Get-ScheduledTask -ErrorAction Stop | Where-Object {
+            $_.TaskPath -eq '\' -and $_.TaskName -in $names
+        })
+        foreach ($task in $existing) {
+            if ($task.Description -ne $description) { throw 'Task name conflict' }
+        }
+        if ($Mode -eq 'Remove') {
+            foreach ($task in $existing) { $task | Unregister-ScheduledTask -Confirm:$false }
+            return
+        }
+        if ($Mode -eq 'Setup') {
+            $portal = Read-Portal (Read-Host 'EY端末内で、閲覧用の公式トップURLを入力（HTTPS、クエリなし）')
+            $settings = @{Portal=$portal}
+            if ($DirectPunchPage) {
+                $settings.PunchPage = Read-Portal (Read-Host '表示だけで打刻されない、承認済みの公式打刻画面URLを入力')
+            }
+            [void][IO.Directory]::CreateDirectory($root)
+            Record $config ($settings | ConvertTo-Json -Compress)
+        } else {
+            $settings = Get-Content -Raw -Encoding UTF8 -LiteralPath $config | ConvertFrom-Json
+            [void](Read-Portal $settings.Portal)
+        }
+        $off = Join-Path $root 'off-days.txt'
+        if (!(Test-Path -LiteralPath $off)) { [IO.File]::WriteAllText($off,'') }
+        $user = [Security.Principal.WindowsIdentity]::GetCurrent().Name
+        $principal = New-ScheduledTaskPrincipal -UserId $user -LogonType Interactive -RunLevel Limited
+        $options = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -MultipleInstances IgnoreNew
+        foreach ($kind in $kinds) {
+            $name = "$prefix-$kind"
+            if ($kind -eq 'Start' -and $NativeStart) {
+                if ($existing.TaskName -contains $name) { Unregister-ScheduledTask -TaskName $name -Confirm:$false }
+                continue
+            }
+            $trigger = if ($kind -eq 'Start') { New-ScheduledTaskTrigger -AtLogOn -User $user }
+            else {
+                New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday `
+                    -At '19:00' -RandomDelay ([timespan]::FromMinutes(30))
+            }
+            $arguments = '-NoProfile -STA -WindowStyle Hidden -File "{0}" -Mode {1}' -f $scriptPath,$kind
+            $action = New-ScheduledTaskAction -Execute $exe -Argument $arguments
+            [void](Register-ScheduledTask -TaskName $name -Trigger $trigger -Action $action -Principal $principal -Settings $options -Description $description -Force)
+        }
+        Write-Output "登録完了。退勤通知 平日19:00〜19:30 / 休日ファイル $off"
+        return
+    }
+    $mutex = [Threading.Mutex]::new($false,"Local\LysitheaAttendance-$sid-$Mode")
+    try {
+        try { $entered = $mutex.WaitOne(0) } catch [Threading.AbandonedMutexException] { $entered = $true }
+        if ($entered) {
+            $settings = Get-Content -Raw -Encoding UTF8 -LiteralPath $config | ConvertFrom-Json
+            Run-Reminder $Mode (Today) $root $settings -Manual:$Manual
+        }
+    } finally {
+        if ($entered) { $mutex.ReleaseMutex() }
+        $mutex.Dispose()
+    }
+} catch {
+    if ($Mode -in 'Setup','FinishSchedule','Remove') { throw }
+    Tell '勤怠支援の処理を完了できませんでした。公式履歴を確認し、接続・設定を確認後に再開してください。'
+    exit 1
+}
+'@
+    $oldSource = [IO.File]::ReadAllText($file.FullName)
+    $normalized = $oldSource.Replace([string][char]13,'').TrimEnd()
+    $needsUpdate = $normalized -cne $updated.Replace([string][char]13,'').TrimEnd()
+    if ($needsUpdate) {
+        $sha = [Security.Cryptography.SHA256]::Create()
+        try {
+            $hash = [BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($normalized))).Replace('-','')
+        } finally { $sha.Dispose() }
+        if ($hash -ne '2A9F0AC6AE1F6B31636B245E93BB366DF60078F5FFD723007CC6C8F57050E3F0') {
+            throw '配布済みの旧版と内容が一致しません。対象ファイルを確認してください。'
+        }
+    }
+    $profileFolder = Join-Path $env:LOCALAPPDATA 'LysitheaAttendanceHelper'
+    $hasSettings = Test-Path -LiteralPath (Join-Path $profileFolder 'settings.json') -PathType Leaf
     Write-Host ('対象ファイル: ' + $file.FullName)
-    Write-Host '出勤: 会社の正式なログオン連携を使用（NativeStart）。既存の出勤支援タスクがあれば解除します。'
-    Write-Host '退勤: 本人がログオンしている平日の17:30に通知。勤務継続時は保留できます。'
-    Write-Host '会社が認めた閲覧用の公式入口URLを、この端末内の次の入力欄で設定します。'
-    $consent = Read-Host '正式な出勤登録を確認済みで、社内でタスク登録が許可されている場合のみ REGISTER と入力'
+    Write-Host '退勤: 本人がログオンしている平日の19:00〜19:30にランダムな時刻で通知。勤務継続時は保留できます。'
+    if ($needsUpdate) { Write-Host '保存済みの配布版 Attendance.ps1 を更新します。' }
+    if ($hasSettings) {
+        Write-Host '退勤通知タスクを更新します。出勤の構成と保存済みURLを引き継ぎます。'
+        $consent = Read-Host '社内でタスク更新が許可されている場合のみ REGISTER と入力'
+    } else {
+        Write-Host '初回設定では正式なログオン連携を利用します（NativeStart）。公式入口URLはこの端末で入力します。'
+        $consent = Read-Host '正式な出勤登録を確認済みで、社内でタスク登録が許可されている場合のみ REGISTER と入力'
+    }
     if ($consent -cne 'REGISTER') {
         Write-Host '中止しました。'
         return
     }
 
-    &amp; $file.FullName -Mode Setup -NativeStart -EndTime '17:30'
+    if ($needsUpdate) {
+        if ([IO.File]::ReadAllText($file.FullName) -cne $oldSource) { throw '確認中にファイルが変更されました。' }
+        $temporary = $file.FullName + '.' + [guid]::NewGuid().ToString('N') + '.tmp'
+        [IO.File]::WriteAllText($temporary,$updated + [Environment]::NewLine,[Text.UTF8Encoding]::new($true))
+        try { [IO.File]::Replace($temporary,$file.FullName,[System.Management.Automation.Language.NullString]::Value) }
+        finally { [IO.File]::Delete($temporary) }
+    }
+    if ($hasSettings) { &amp; $file.FullName -Mode FinishSchedule }
+    else { &amp; $file.FullName -Mode Setup -NativeStart }
 
     $sid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
     $prefix = 'LysitheaAttendance-' + $sid
     $tasks = @(Get-ScheduledTask | Where-Object {
-        $_.TaskPath -eq '\' -and $_.TaskName -in "$prefix-Start","$prefix-Finish"
+        $_.TaskPath -eq '\' -and $_.TaskName -eq "$prefix-Finish"
     })
     $description = 'LysitheaAttendanceHelper v1 | ' + $file.FullName
     if ($tasks.Count -ne 1 -or $tasks[0].TaskName -ne "$prefix-Finish" -or
